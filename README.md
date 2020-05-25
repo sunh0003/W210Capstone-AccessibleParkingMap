@@ -1,5 +1,5 @@
 ## Product Concept
 ## Our Vision
 ## Data
-## Model 
+## Model Methodology
 ## Website
