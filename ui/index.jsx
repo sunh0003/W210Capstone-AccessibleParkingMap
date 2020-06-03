@@ -24,23 +24,34 @@ class TheSite extends React.Component {
     //declare intial state vars
     constructor(props) {
         super(props);
-        this.state = {key: 'home'};
+        this.state = {
+            key: 'home',
+            icons: {'center': {
+                //default
+                    lat:39.74917208,
+                    lng:-104.9870462
+                },
+                'wheelchairs':[], 
+                'meters':[], 
+                'lamps': [], 
+                'hydrants': []}
+            };
+        this.get_icons();
     }
 
-    static defaultProps = {
-        center: {
-            lat:39.74917208,
-            lng:-104.9870462
-        },
-        zoom: 16
-    };
+    get_icons = () => {
+        fetch("api/get_icons")
+            .then(response => response.json())
+            .then(data => this.setState({'icons':data}));
+    }
 
     render() {
         return (
-            <div style={{padding:'35px'}}>
+            <div style={{padding:'35px', weight: 'bold'}}>
             <Card>
-                <Card.Header>Accessible Parking Map Denver</Card.Header>
-                
+                <Card.Header>
+                    <Card.Title>HandiPark Denver</Card.Title>Computer-vision powered guide to accessible street parking.
+                </Card.Header>
                 {/* <Tabs activeKey={this.state.key}
                     onSelect={key => this.setState({ key })}>
                         <Tab eventKey="home" title="Map">
@@ -52,34 +63,42 @@ class TheSite extends React.Component {
                 </Tabs>                           */}
                 <div style={{ height: '100vh', width: '100%', padding: '35px'}}>
                     <GoogleMapReact
-                        bootstrapURLKeys={{ key: 'KEY HERE' }}
-                        defaultCenter={this.props.center}
-                        defaultZoom={this.props.zoom}
+                        bootstrapURLKeys={{ key: 'key here' }}
+                        defaultCenter={this.state.icons.center}
+                        defaultZoom={16}
                     >
-                        <Icon icon={wheelchairAccessibility} 
+                        {this.state.icons.meters.map(coords =>
+                            <Icon icon={parkingmeterIcon} 
+                            color='grey'
+                            lat={coords[0]}
+                            lng={coords[1]}
+                            width="12"
+                            height="12"/>
+                        )}
+                        {this.state.icons.wheelchairs.map(coords =>
+                            <Icon icon={wheelchairAccessibility} 
                             color='blue'
-                            lat={39.74755556}
-                            lng={-104.98428899999999}
+                            lat={coords[0]}
+                            lng={coords[1]}
                             width="25"
                             height="25"/>
-                        <Icon icon={fireHydrant} 
-                                color='orange'
-                                lat={39.74754878}
-                                lng={-104.9925866}
-                                width="25"
-                                height="25"/>
-                        <Icon icon={coachLamp} 
-                                color='red'
-                                lat={39.74917208}
-                                lng={-104.9870462}
-                                width="25"
-                                height="25"/>
-                        <Icon icon={parkingmeterIcon} 
-                            color='green'
-                            lat={39.74917611}
-                            lng={-104.98178429999999}
+                        )}
+                        {this.state.icons.hydrants.map(coords =>
+                            <Icon icon={fireHydrant} 
+                            color='orange'
+                            lat={coords[0]}
+                            lng={coords[1]}
                             width="25"
                             height="25"/>
+                        )}
+                        {this.state.icons.lamps.map(coords =>
+                            <Icon icon={coachLamp} 
+                            color='red'
+                            lat={coords[0]}
+                            lng={coords[1]}
+                            width="25"
+                            height="25"/>
+                        )}
                     </GoogleMapReact>
                 </div>
             </Card>
