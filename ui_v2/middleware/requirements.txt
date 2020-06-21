@@ -1,0 +1,5 @@
+numpy
+pandas
+Flask
+requests
+#todo - pin versions
