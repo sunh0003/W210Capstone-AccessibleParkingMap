@@ -3,8 +3,10 @@ import pandas as pd
 import numpy as np
 import requests
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 urls = ['https://www.denvergov.org/media/gis/DataCatalog/parking_meters/csv/parking_meters.csv']
 #download data on startup

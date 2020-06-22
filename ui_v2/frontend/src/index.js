@@ -16,7 +16,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // npm install --save-dev @iconify/react @iconify/icons-mdi @iconify/icons-whh
 // npm install react-bootstrap bootstrap
 
+//define constants for networking - todo - this may be different on the cluster
+var headers = new Headers();
+headers.append('Access-Control-Allow-Origin', 'http://localhost:3001');
+headers.append('Sec-Fetch-Mode', 'cors');
+headers.append('mode', 'cors');
 
+const PATH='http://localhost:5000/';
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -38,7 +44,7 @@ class TheSite extends React.Component {
     }
 
     get_icons = () => {
-        fetch("api/get_icons")
+        fetch(PATH + "api/get_icons", {'headers': headers})
             .then(response => response.json())
             .then(data => this.setState({'icons':data}));
     }
@@ -78,15 +84,6 @@ class TheSite extends React.Component {
                             Lamp - <i><a href="http://maps.google.com">Google Streetview</a></i> and Computer Vision
                     </ListGroup.Item>
                 </ListGroup>
-                {/* <Tabs activeKey={this.state.key}
-                    onSelect={key => this.setState({ key })}>
-                        <Tab eventKey="home" title="Map">
-                            <div>A</div>
-                        </Tab>
-                        <Tab eventKey="other" title="About Us">
-                            <div>TEST</div>
-                        </Tab>
-                </Tabs>                           */}
                 <div style={{ height: '100vh', width: '100%', padding: '35px'}}>
                     <GoogleMapReact
                         bootstrapURLKeys={{ key: 'AIzaSyCixu7jWg2hRAuPYKdot3A-2dYx8kuCAkg' }}
