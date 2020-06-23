@@ -1,0 +1,48 @@
+{
+  "name": "accesspark",
+  "version": "1.0.0",
+  "description": "This is a dummy description",
+  "main": "",
+  "dependencies": {
+    "baseui": "^9.84.1",
+    "bootstrap": "^4.5.0",
+    "google-map-react": "^1.1.7",
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "styletron-engine-atomic": "^1.4.6",
+    "styletron-react": "^5.2.7"
+  },
+  "devDependencies": {
+    "@iconify/icons-mdi": "^1.0.112",
+    "@iconify/icons-whh": "^1.0.3",
+    "@iconify/react": "^1.1.3",
+    "file-loader": "^6.0.0"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "author": "",
+  "license": "MIT",
+  "readme": "This is a dummy readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
