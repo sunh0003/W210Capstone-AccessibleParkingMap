@@ -36,7 +36,7 @@ def get_icons():
     #Get 100 closest parking meters to center - overloads to have all at once
     #TODO - replace this with a radius/more intelligently chosen threshold
     m_lens = [(coord, lin_dist(coord, center)) for coord in global_meters]
-    m_lens = sorted(m_lens, key = lambda x: x[1])[:200]
+    m_lens = sorted(m_lens, key = lambda x: x[1])[:5]
     meters = [m[0] for m in m_lens]
 
     #samples for demo purposes

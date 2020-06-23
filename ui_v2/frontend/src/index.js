@@ -12,16 +12,13 @@ import ListGroup from 'react-bootstrap/ListGroup'
 // import Tab from 'react-bootstrap/Tab'
 import Card from 'react-bootstrap/Card'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import key from './key.js';
 //npm install google-map-react
 // npm install --save-dev @iconify/react @iconify/icons-mdi @iconify/icons-whh
+//npm install file-loader --save-dev
+//npm install baseui styletron-engine-atomic styletron-react
 // npm install react-bootstrap bootstrap
-
 //define constants for networking - todo - this may be different on the cluster
-var headers = new Headers();
-headers.append('Access-Control-Allow-Origin', 'http://localhost:3001');
-headers.append('Sec-Fetch-Mode', 'cors');
-headers.append('mode', 'cors');
-
 const PATH='http://localhost:5000/';
 
 class TheSite extends React.Component {
@@ -29,7 +26,7 @@ class TheSite extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            key: 'home',
+            key: {key:key},
             icons: {'center': {
                 //default
                     lat:39.74917208,
@@ -44,7 +41,7 @@ class TheSite extends React.Component {
     }
 
     get_icons = () => {
-        fetch(PATH + "api/get_icons", {'headers': headers})
+        fetch(PATH + "api/get_icons")
             .then(response => response.json())
             .then(data => this.setState({'icons':data}));
     }
@@ -86,9 +83,9 @@ class TheSite extends React.Component {
                 </ListGroup>
                 <div style={{ height: '100vh', width: '100%', padding: '35px'}}>
                     <GoogleMapReact
-                        bootstrapURLKeys={{ key: 'AIzaSyCixu7jWg2hRAuPYKdot3A-2dYx8kuCAkg' }}
+                        bootstrapURLKeys={this.state.key}
                         defaultCenter={this.state.icons.center}
-                        defaultZoom={17}
+                        defaultZoom={18}
                     >
                         {this.state.icons.meters.map(coords =>
                             <Icon icon={parkingmeterIcon} 

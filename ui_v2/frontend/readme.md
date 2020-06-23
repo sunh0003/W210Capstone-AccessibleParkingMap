@@ -1,8 +1,9 @@
-To run:
+To run react alone:
 ```
 docker build -t react:dev .
 docker run  -it --rm -v ${PWD}:/app -v /app/node_modules -p 3001:3000 -e CHOKIDAR_USEPOLLING=true react:dev
 ```
+To access, go to http://localhost:3001/
 
 {/* Note for reference:
 <Map
