@@ -74,7 +74,7 @@ class TheSite extends React.Component {
         return (
             <StyletronProvider value={engine}>
                 <BaseProvider theme={LightTheme}>
-                <div style={{width:'160px'}}>
+                <div style={{width:'205px'}}>
                 <HeaderNavigation>
                     <StyledNavigationList $align={ALIGN.left}>
                         <StyledNavigationItem>
@@ -82,7 +82,7 @@ class TheSite extends React.Component {
                                 <Icon icon={wheelchairAccessibility} 
                                     color='blue'/>
                             </div>
-                            AccessPark
+                            AccessPark Denver
                     </StyledNavigationItem>
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.center} />
@@ -117,7 +117,7 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                 </HeaderNavigation>
                 </div>
-                <div style={{ height: '95vh', width: '100%', padding: '12px'}}>
+                <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
                     {this.state.selected == 'guide' &&
                     <ListGroup variant="flush">
                         <ListGroup.Item>
