@@ -49,6 +49,7 @@ def get_icons():
         hydrants=hydrants, 
         wheelchairs=wheelchairs, 
         lamps=lamps)
+
     return jsonify(out)
 
 

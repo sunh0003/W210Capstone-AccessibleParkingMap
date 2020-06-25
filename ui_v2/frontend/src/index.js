@@ -7,12 +7,20 @@ import wheelchairAccessibility from '@iconify/icons-mdi/wheelchair-accessibility
 import fireHydrant from '@iconify/icons-mdi/fire-hydrant';
 import coachLamp from '@iconify/icons-mdi/coach-lamp';
 import parkingmeterIcon from '@iconify/icons-whh/parkingmeter';
+import {
+  HeaderNavigation,
+  ALIGN,
+  StyledNavigationList,
+  StyledNavigationItem
+} from "baseui/header-navigation";
+import { StyledLink } from "baseui/link";
+import {BaseProvider, LightTheme} from 'baseui';
+import { Provider as StyletronProvider } from "styletron-react";
+import { Client as Styletron } from "styletron-engine-atomic";
+//Todo - drop
 import ListGroup from 'react-bootstrap/ListGroup'
-// import Tabs from 'react-bootstrap/Tabs'
-// import Tab from 'react-bootstrap/Tab'
-import Card from 'react-bootstrap/Card'
-import 'bootstrap/dist/css/bootstrap.min.css';
 import key from './key.js';
+import {StatefulSelect as Search, TYPE} from 'baseui/select';
 //npm install google-map-react
 // npm install --save-dev @iconify/react @iconify/icons-mdi @iconify/icons-whh
 //npm install file-loader --save-dev
@@ -21,12 +29,15 @@ import key from './key.js';
 //define constants for networking - todo - this may be different on the cluster
 const PATH='http://localhost:5000/';
 
+const engine = new Styletron();
+
 class TheSite extends React.Component {
     //declare intial state vars
     constructor(props) {
         super(props);
         this.state = {
             key: {key:key},
+            selected: 'map', //initial tab selection
             icons: {'center': {
                 //default
                     lat:39.74917208,
@@ -46,42 +57,96 @@ class TheSite extends React.Component {
             .then(data => this.setState({'icons':data}));
     }
 
+    onMap = () => {
+        this.setState({'selected': 'map'});
+    }
+
+    onGuide = () => {
+        this.setState({'selected': 'guide'});
+    }
+
+    onAbout = () => {
+        this.setState({'selected': 'about'});
+    }
+
     render() {
-        const size = 20;
+        const size = 25;
         return (
-            <div style={{padding:'35px', weight: 'bold'}}>
-            <Card>
-                <Card.Header>
-                    <Card.Title>HandiPark Denver</Card.Title>
-                    AI-powered guide to accessible street parking.
-                </Card.Header>
-                <ListGroup variant="flush">
-                    <ListGroup.Item>
-                        <Icon icon={parkingmeterIcon} 
-                            color='grey'
-                            width={size}
-                            height={size}/>
-                            Parking Meter - <i> <a href="https://www.denvergov.org/opendata/dataset/city-and-county-of-denver-parking-meters">Denver Open Data</a></i>
-                            </ListGroup.Item>
-                    <ListGroup.Item>
-                        <Icon icon={wheelchairAccessibility} 
-                            color='blue'
-                            width={size}
-                            height={size}/>
-                            Handicap Parking  
-                        <Icon icon={fireHydrant} 
-                            color='orange'
-                            width={size}
-                            height={size}/>
-                            Fire Hydrant 
-                        <Icon icon={coachLamp} 
-                            color='red'
-                            width={size}
-                            height={size}/>
-                            Lamp - <i><a href="http://maps.google.com">Google Streetview</a></i> and Computer Vision
-                    </ListGroup.Item>
-                </ListGroup>
-                <div style={{ height: '100vh', width: '100%', padding: '35px'}}>
+            <StyletronProvider value={engine}>
+                <BaseProvider theme={LightTheme}>
+                <div style={{width:'160px'}}>
+                <HeaderNavigation>
+                    <StyledNavigationList $align={ALIGN.left}>
+                        <StyledNavigationItem>
+                            <div style={{padding: '5px', display: 'inline-block'}}>
+                                <Icon icon={wheelchairAccessibility} 
+                                    color='blue'/>
+                            </div>
+                            AccessPark
+                    </StyledNavigationItem>
+                    </StyledNavigationList>
+                    <StyledNavigationList $align={ALIGN.center} />
+                    <StyledNavigationList $align={ALIGN.right}>
+                        <StyledNavigationItem>
+                        <StyledLink href='#' onClick={this.onMap}>
+                            Map
+                        </StyledLink>
+                        </StyledNavigationItem>
+                        <StyledNavigationItem>
+                        <StyledLink href='#' onClick={this.onGuide}>
+                            User Guide
+                        </StyledLink>
+                        </StyledNavigationItem>
+                    </StyledNavigationList>
+                    <StyledNavigationList $align={ALIGN.right}>
+                        <StyledNavigationItem>
+                            <StyledLink href='#' onClick={this.onAbout}>
+                                About Us
+                            </StyledLink>
+                        </StyledNavigationItem>
+                    </StyledNavigationList>
+                    <StyledNavigationList $align={ALIGN.right}>
+                    <StyledNavigationItem style={{width: '300px'}}>
+                        <Search
+                        // {...options}
+                         type={TYPE.search}
+                        // getOptionLabel={props => props.option.id || null}
+                        // onChange={() => {}}
+                        />
+                    </StyledNavigationItem>
+                    </StyledNavigationList>
+                </HeaderNavigation>
+                </div>
+                <div style={{ height: '95vh', width: '100%', padding: '12px'}}>
+                    {this.state.selected == 'guide' &&
+                    <ListGroup variant="flush">
+                        <ListGroup.Item>
+                            <Icon icon={parkingmeterIcon} 
+                                color='grey'
+                                width={size}
+                                height={size}/>
+                                Parking Meter - <i> <a href="https://www.denvergov.org/opendata/dataset/city-and-county-of-denver-parking-meters">Denver Open Data</a></i>
+                                </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Icon icon={wheelchairAccessibility} 
+                                color='blue'
+                                width={size}
+                                height={size}/>
+                                Handicap Parking  
+                            <Icon icon={fireHydrant} 
+                                color='orange'
+                                width={size}
+                                height={size}/>
+                                Fire Hydrant 
+                            <Icon icon={coachLamp} 
+                                color='red'
+                                width={size}
+                                height={size}/>
+                                Lamp - <i><a href="http://maps.google.com">Google Streetview</a></i> and Computer Vision
+                        </ListGroup.Item>
+                    </ListGroup>
+                    }
+                {this.state.selected == 'map' &&
                     <GoogleMapReact
                         bootstrapURLKeys={this.state.key}
                         defaultCenter={this.state.icons.center}
@@ -120,9 +185,10 @@ class TheSite extends React.Component {
                             height="20"/>
                         )}
                     </GoogleMapReact>
+                    }
                 </div>
-            </Card>
-        </div>
+                </BaseProvider>
+            </StyletronProvider>
         );
     }
 }
