@@ -27,7 +27,7 @@ import {StatefulSelect as Search, TYPE} from 'baseui/select';
 //npm install baseui styletron-engine-atomic styletron-react
 // npm install react-bootstrap bootstrap
 //define constants for networking - todo - this may be different on the cluster
-const PATH='http://localhost:5000/';
+const PATH='http://ec2-13-52-253-171.us-west-1.compute.amazonaws.com:5000/';
 
 const engine = new Styletron();
 
