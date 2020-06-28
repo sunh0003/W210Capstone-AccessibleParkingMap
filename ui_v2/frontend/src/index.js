@@ -101,7 +101,7 @@ class TheSite extends React.Component {
                     <StyledNavigationList $align={ALIGN.right}>
                         <StyledNavigationItem>
                             <StyledLink href='#' onClick={this.onAbout}>
-                                About Us
+                                About This Project
                             </StyledLink>
                         </StyledNavigationItem>
                     </StyledNavigationList>
