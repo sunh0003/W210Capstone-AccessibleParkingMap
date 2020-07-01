@@ -6,7 +6,7 @@ import { Icon } from '@iconify/react';
 import wheelchairAccessibility from '@iconify/icons-mdi/wheelchair-accessibility';
 import fireHydrant from '@iconify/icons-mdi/fire-hydrant';
 import coachLamp from '@iconify/icons-mdi/coach-lamp';
-import parkingmeterIcon from '@iconify/icons-whh/parkingmeter';
+import carBrakeParking from '@iconify/icons-mdi/car-brake-parking';
 import {
   HeaderNavigation,
   ALIGN,
@@ -121,8 +121,8 @@ class TheSite extends React.Component {
                     {this.state.selected == 'guide' &&
                     <ListGroup variant="flush">
                         <ListGroup.Item>
-                            <Icon icon={parkingmeterIcon} 
-                                color='grey'
+                            <Icon icon={carBrakeParking} 
+                                color='green'
                                 width={size}
                                 height={size}/>
                                 Parking Meter - <i> <a href="https://www.denvergov.org/opendata/dataset/city-and-county-of-denver-parking-meters">Denver Open Data</a></i>
@@ -153,8 +153,8 @@ class TheSite extends React.Component {
                         defaultZoom={18}
                     >
                         {this.state.icons.meters.map(coords =>
-                            <Icon icon={parkingmeterIcon} 
-                            color='grey'
+                            <Icon icon={carBrakeParking} 
+                            color='green'
                             lat={coords[0]}
                             lng={coords[1]}
                             width="20"
