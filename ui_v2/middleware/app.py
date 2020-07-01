@@ -50,7 +50,11 @@ def get_icons():
     zip_meters = get_zip(meters, zipc)
     print(len(zip_meters), 'meters in zip', zipc)
     lamp,signh,fh,nopark,stop = get_zip_objects(objects, zipc)
-
+    print(len(lamp), 'lamps in zip')
+    print(len(signh), 'signh in zip')
+    print(len(fh), 'fh in zip')
+    print(len(nopark), 'nopark in zip')
+    print(len(stop), 'stop in zip')
     #TODO - get center from request
     center = (39.739492999999996,-104.982258)
     
