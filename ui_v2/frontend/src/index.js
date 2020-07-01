@@ -28,8 +28,8 @@ import {StatefulSelect as Search, TYPE} from 'baseui/select';
 //npm install baseui styletron-engine-atomic styletron-react
 // npm install react-bootstrap bootstrap
 //define constants for networking - todo - this may be different on the cluster
-//const PATH='http://ec2-13-52-253-171.us-west-1.compute.amazonaws.com:5000/';
-const PATH='http://localhost:5000/';
+const PATH='http://ec2-13-52-253-171.us-west-1.compute.amazonaws.com:5000/';
+//const PATH='http://localhost:5000/';
 
 const engine = new Styletron();
 
@@ -48,7 +48,8 @@ class TheSite extends React.Component {
                 'wheelchairs':[], 
                 'meters':[], 
                 'lamps': [], 
-                'hydrants': []}
+                'hydrants': [],
+                'nopark': []}
             };
         this.get_icons();
     }
@@ -181,6 +182,14 @@ class TheSite extends React.Component {
                         {this.state.icons.lamps.map(coords =>
                             <Icon icon={coachLamp} 
                             color='orange'
+                            lat={coords[0]}
+                            lng={coords[1]}
+                            width="20"
+                            height="20"/>
+                        )}
+                        {this.state.icons.nopark.map(coords =>
+                            <Icon icon={doNotDisturbOff} 
+                            color='red'
                             lat={coords[0]}
                             lng={coords[1]}
                             width="20"
