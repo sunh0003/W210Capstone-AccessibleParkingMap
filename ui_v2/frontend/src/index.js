@@ -7,6 +7,7 @@ import wheelchairAccessibility from '@iconify/icons-mdi/wheelchair-accessibility
 import fireHydrant from '@iconify/icons-mdi/fire-hydrant';
 import coachLamp from '@iconify/icons-mdi/coach-lamp';
 import carBrakeParking from '@iconify/icons-mdi/car-brake-parking';
+import doNotDisturbOff from '@iconify/icons-mdi/do-not-disturb-off';
 import {
   HeaderNavigation,
   ALIGN,
@@ -27,7 +28,8 @@ import {StatefulSelect as Search, TYPE} from 'baseui/select';
 //npm install baseui styletron-engine-atomic styletron-react
 // npm install react-bootstrap bootstrap
 //define constants for networking - todo - this may be different on the cluster
-const PATH='http://ec2-13-52-253-171.us-west-1.compute.amazonaws.com:5000/';
+//const PATH='http://ec2-13-52-253-171.us-west-1.compute.amazonaws.com:5000/';
+const PATH='http://localhost:5000/';
 
 const engine = new Styletron();
 
@@ -82,7 +84,7 @@ class TheSite extends React.Component {
                                 <Icon icon={wheelchairAccessibility} 
                                     color='blue'/>
                             </div>
-                            AccessPark Denver
+                            AccessiPark Denver
                     </StyledNavigationItem>
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.center} />
@@ -134,12 +136,12 @@ class TheSite extends React.Component {
                                 height={size}/>
                                 Handicap Parking  
                             <Icon icon={fireHydrant} 
-                                color='orange'
+                                color='yellow'
                                 width={size}
                                 height={size}/>
                                 Fire Hydrant 
                             <Icon icon={coachLamp} 
-                                color='red'
+                                color='orange'
                                 width={size}
                                 height={size}/>
                                 Lamp - <i><a href="http://maps.google.com">Google Streetview</a></i> and Computer Vision
@@ -170,7 +172,7 @@ class TheSite extends React.Component {
                         )}
                         {this.state.icons.hydrants.map(coords =>
                             <Icon icon={fireHydrant} 
-                            color='orange'
+                            color='yellow'
                             lat={coords[0]}
                             lng={coords[1]}
                             width="20"
@@ -178,7 +180,7 @@ class TheSite extends React.Component {
                         )}
                         {this.state.icons.lamps.map(coords =>
                             <Icon icon={coachLamp} 
-                            color='red'
+                            color='orange'
                             lat={coords[0]}
                             lng={coords[1]}
                             width="20"
