@@ -1,13 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-// import css from 'style.scss';
-import GoogleMapReact from 'google-map-react';
+import React from "react";
+import ReactDOM from "react-dom";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Polyline,
+  Marker
+} from "react-google-maps";
+import key from './key.js';
 import { Icon } from '@iconify/react';
 import wheelchairAccessibility from '@iconify/icons-mdi/wheelchair-accessibility';
-import fireHydrant from '@iconify/icons-mdi/fire-hydrant';
-import coachLamp from '@iconify/icons-mdi/coach-lamp';
-import carBrakeParking from '@iconify/icons-mdi/car-brake-parking';
-import doNotDisturbOff from '@iconify/icons-mdi/do-not-disturb-off';
 import {
   HeaderNavigation,
   ALIGN,
@@ -19,19 +21,30 @@ import {BaseProvider, LightTheme} from 'baseui';
 import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
 //Todo - drop
-import ListGroup from 'react-bootstrap/ListGroup'
-import key from './key.js';
 import {StatefulSelect as Search, TYPE} from 'baseui/select';
+
+import signh from "./icons/icons8-assistive-technology-48.png";
+import hydrant from "./icons/icons8-fire-hydrant-50.png";
+import nopark from "./icons/icons8-no-parking-48.png";
+import lamp from "./icons/icons8-street-lamp-50.png";
+import park from "./icons/icons8-parking-30.png";
+
 //npm install google-map-react
 // npm install --save-dev @iconify/react @iconify/icons-mdi @iconify/icons-whh
 //npm install file-loader --save-dev
 //npm install baseui styletron-engine-atomic styletron-react
 // npm install react-bootstrap bootstrap
 //define constants for networking - todo - this may be different on the cluster
-const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
-//const PATH='http://localhost:5000/';
 
+//const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
+const PATH='http://localhost:5000/';
 const engine = new Styletron();
+
+var markerStyling= {
+  clear: "both", display: "inline-block", backgroundColor: "#00921A", fontWeight: '500',
+  color: "#FFFFFF", boxShadow: "0 6px 8px 0 rgba(63,63,63,0.11)", borderRadius: "23px",
+  padding: "8px 16px", whiteSpace: "nowrap", width: "160px", textAlign: "center"
+};
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -74,6 +87,51 @@ class TheSite extends React.Component {
 
     render() {
         const size = 25;
+        console.log(this.state.icons);
+        console.log(this.state.icons.center);
+
+        const InternalMap = props => (
+            <GoogleMap defaultZoom={18} defaultCenter={this.state.icons.center}>
+                <Polyline
+                path={[{ lat: 39.739492999999996, lng: -104.982258 }, { lat: 39.73, lng: -151.644 }, { lat: -90, lng: 151.644 }]}
+                />
+                
+                
+                {this.state.icons.hydrants.map(coords =>
+                    <Marker
+                    position={{ lat: coords[0], lng: coords[1] }}
+                    icon={hydrant}
+                    />)
+                }
+                {this.state.icons.lamps.map(coords =>
+                    <Marker
+                    position={{ lat: coords[0], lng: coords[1] }}
+                    icon={lamp}
+                    />)
+                }
+                {this.state.icons.meters.map(coords =>
+                    <Marker
+                    position={{ lat: coords[0], lng: coords[1] }}
+                    icon={park}
+                    />)
+                }
+                {this.state.icons.nopark.map(coords =>
+                    <Marker
+                    position={{ lat: coords[0], lng: coords[1] }}
+                    icon={nopark}
+                    />)
+                }
+                {this.state.icons.wheelchairs.map(coords =>
+                    <Marker
+                    position={{ lat: coords[0], lng: coords[1] }}
+                    icon={signh}
+                    />)
+                }
+            </GoogleMap>
+            );
+
+        const MapHoc = withScriptjs(withGoogleMap(InternalMap));
+            
         return (
             <StyletronProvider value={engine}>
                 <BaseProvider theme={LightTheme}>
@@ -121,82 +179,21 @@ class TheSite extends React.Component {
                 </HeaderNavigation>
                 </div>
                 <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
-                    {this.state.selected == 'guide' &&
-                    <ListGroup variant="flush">
-                        <ListGroup.Item>
-                            <Icon icon={carBrakeParking} 
-                                color='green'
-                                width={size}
-                                height={size}/>
-                                Parking Meter - <i> <a href="https://www.denvergov.org/opendata/dataset/city-and-county-of-denver-parking-meters">Denver Open Data</a></i>
-                                </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Icon icon={wheelchairAccessibility} 
-                                color='blue'
-                                width={size}
-                                height={size}/>
-                                Handicap Parking  
-                            <Icon icon={fireHydrant} 
-                                color='yellow'
-                                width={size}
-                                height={size}/>
-                                Fire Hydrant 
-                            <Icon icon={coachLamp} 
-                                color='orange'
-                                width={size}
-                                height={size}/>
-                                Lamp - <i><a href="http://maps.google.com">Google Streetview</a></i> and Computer Vision
-                        </ListGroup.Item>
-                    </ListGroup>
-                    }
+                {this.state.selected == 'guide' &&
+                <p>tbd</p>
+                }
+                {this.state.selected == 'about' &&
+                <p>tbd</p>
+                }
                 {this.state.selected == 'map' &&
-                    <GoogleMapReact
-                        bootstrapURLKeys={this.state.key}
-                        defaultCenter={this.state.icons.center}
-                        defaultZoom={18}
-                    >
-                        {this.state.icons.meters.map(coords =>
-                            <Icon icon={carBrakeParking} 
-                            color='green'
-                            lat={coords[0]}
-                            lng={coords[1]}
-                            width="20"
-                            height="20"/>
-                        )}
-                        {this.state.icons.wheelchairs.map(coords =>
-                            <Icon icon={wheelchairAccessibility} 
-                            color='blue'
-                            lat={coords[0]}
-                            lng={coords[1]}
-                            width="20"
-                            height="20"/>
-                        )}
-                        {this.state.icons.hydrants.map(coords =>
-                            <Icon icon={fireHydrant} 
-                            color='yellow'
-                            lat={coords[0]}
-                            lng={coords[1]}
-                            width="20"
-                            height="20"/>
-                        )}
-                        {this.state.icons.lamps.map(coords =>
-                            <Icon icon={coachLamp} 
-                            color='orange'
-                            lat={coords[0]}
-                            lng={coords[1]}
-                            width="20"
-                            height="20"/>
-                        )}
-                        {this.state.icons.nopark.map(coords =>
-                            <Icon icon={doNotDisturbOff} 
-                            color='red'
-                            lat={coords[0]}
-                            lng={coords[1]}
-                            width="20"
-                            height="20"/>
-                        )}
-                    </GoogleMapReact>
-                    }
+                    <MapHoc
+                        googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + key + "&v=3.exp&libraries=geometry,drawing,places"}
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `90vh` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                    />
+                    
+                }
                 </div>
                 </BaseProvider>
             </StyletronProvider>
@@ -204,4 +201,7 @@ class TheSite extends React.Component {
     }
 }
 
-ReactDOM.render(<TheSite />, document.getElementById("root"));
+ReactDOM.render(
+  <TheSite />,
+  document.getElementById("root")
+);

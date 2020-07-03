@@ -12,7 +12,8 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
 RUN npm install @iconify/react@1.1.3 
-#^was having an issue installing that dependency from package.json
+RUN npm install --save react-google-maps 
+RUN npm install url-loader
 
 # add app
 COPY . ./

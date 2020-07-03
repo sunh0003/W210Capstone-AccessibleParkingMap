@@ -56,7 +56,7 @@ def get_icons():
     print(len(nopark), 'nopark in zip')
     print(len(stop), 'stop in zip')
     #TODO - get center from request
-    center = (39.739492999999996,-104.982258)
+    center = dict(lat= 39.739492999999996, lng= -104.982258)
     
     # m_lens = [(coord, lin_dist(coord, center)) for coord in global_meters]
     # m_lens = sorted(m_lens, key = lambda x: x[1])[:5]
