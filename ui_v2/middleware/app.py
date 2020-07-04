@@ -4,21 +4,17 @@ import numpy as np
 import requests
 import os
 from flask_cors import CORS
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-# urls = ['https://www.denvergov.org/media/gis/DataCatalog/parking_meters/csv/parking_meters.csv']
-# #download data on startup
-# for url in urls:
-#     name = url.split('/')[-1]
-#     if not os.path.exists(name):
-#         response = requests.get(url)
-#         with open(name, 'wt') as f:
-#             f.write(response.text)
+with open('sidewalks.json', 'rt') as f:
+    sidewalks = json.loads(f.read())
 
-#load data into memory - todo - does this work at scale?
-#if not, use sqlite or other local db
+with open('moratorium_streets.json', 'rt') as f:
+    m_streets = json.loads(f.read())
+
 meters = pd.read_csv('parking_meter_zip.csv').drop_duplicates()
 
 objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
@@ -46,18 +42,23 @@ def lin_dist(a,b):
 @app.route("/api/get_icons")
 def get_icons():
     #TODO - get zip from request
-    zipc = 80264
+    zipc = 80205
+    #sw = sidewalks[zipc]
+    print(sidewalks.keys())
     zip_meters = get_zip(meters, zipc)
     print(len(zip_meters), 'meters in zip', zipc)
     lamp,signh,fh,nopark,stop = get_zip_objects(objects, zipc)
+    sw = sidewalks.get(str(zipc), [])
+    mst = m_streets.get(str(zipc), [])
     print(len(lamp), 'lamps in zip')
     print(len(signh), 'signh in zip')
     print(len(fh), 'fh in zip')
     print(len(nopark), 'nopark in zip')
     print(len(stop), 'stop in zip')
-    #TODO - get center from request
-    center = dict(lat= 39.739492999999996, lng= -104.982258)
+    print(len(sw), 'sidewalks in zip')
     
+    #TODO - get center from request
+    center = dict(lat=39.76895395, lng=-104.9733459)
     # m_lens = [(coord, lin_dist(coord, center)) for coord in global_meters]
     # m_lens = sorted(m_lens, key = lambda x: x[1])[:5]
     # meters = [m[0] for m in m_lens]
@@ -68,7 +69,9 @@ def get_icons():
         hydrants=fh, 
         wheelchairs=signh, 
         lamps=lamp,
-        nopark = stop+nopark)
+        nopark = stop+nopark,
+        sidewalks= sw,
+        m_streets = mst)
 
     return jsonify(out)
 

@@ -62,7 +62,9 @@ class TheSite extends React.Component {
                 'meters':[], 
                 'lamps': [], 
                 'hydrants': [],
-                'nopark': []}
+                'nopark': [],
+                'sidewalks': [],
+                'm_streets':[]}
             };
         this.get_icons();
     }
@@ -88,15 +90,38 @@ class TheSite extends React.Component {
     render() {
         const size = 25;
         console.log(this.state.icons);
-        console.log(this.state.icons.center);
-
+        console.log(this.state.icons.sidewalks);
+        const pth = [{
+                    lat:39.74917208,
+                    lng:-104.9870462
+                }, 
+                {
+                //default
+                    lat:37,
+                    lng:-104.9870462
+                }];
         const InternalMap = props => (
             <GoogleMap defaultZoom={18} defaultCenter={this.state.icons.center}>
-                <Polyline
-                path={[{ lat: 39.739492999999996, lng: -104.982258 }, { lat: 39.73, lng: -151.644 }, { lat: -90, lng: 151.644 }]}
-                />
-                
-                
+                {this.state.icons.sidewalks.map((points) => 
+                    <Polyline
+                    path={points}
+                    options={{
+                        strokeColor: "blue",
+                        strokeOpacity: 0.75,
+                        strokeWeight: 2
+                    }}
+                    />
+                )}
+                {this.state.icons.m_streets.map((points) => 
+                    <Polyline
+                    path={points}
+                    options={{
+                        strokeColor: "green",
+                        strokeOpacity: 0.75,
+                        strokeWeight: 2
+                    }}
+                    />
+                )}
                 {this.state.icons.hydrants.map(coords =>
                     <Marker
                     position={{ lat: coords[0], lng: coords[1] }}
@@ -127,6 +152,8 @@ class TheSite extends React.Component {
                     icon={signh}
                     />)
                 }
+
+
             </GoogleMap>
             );
 
