@@ -18,7 +18,12 @@ with open('moratorium_streets.json', 'rt') as f:
 meters = pd.read_csv('parking_meter_zip.csv').drop_duplicates()
 
 objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
-
+# 7/1 save df by zipcode in csv
+def zip_df(df):
+    for i in df["zipcode"].unique():
+        temp_df = df[df["zipcode"] == i]
+        temp_df.to_csv(i + '.csv', encoding = 'utf-8', index = False)
+        
 print('ready!')
 
 def get_zip(df, zipc):

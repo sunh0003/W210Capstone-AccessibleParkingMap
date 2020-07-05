@@ -28,23 +28,16 @@ import hydrant from "./icons/icons8-fire-hydrant-50.png";
 import nopark from "./icons/icons8-no-parking-48.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
+import Geocode from "react-geocode";
+import Autocomplete from 'react-google-autocomplete';
 
-//npm install google-map-react
-// npm install --save-dev @iconify/react @iconify/icons-mdi @iconify/icons-whh
-//npm install file-loader --save-dev
-//npm install baseui styletron-engine-atomic styletron-react
-// npm install react-bootstrap bootstrap
-//define constants for networking - todo - this may be different on the cluster
+// Geocode.setApiKey(key);
+// Geocode.enableDebug();
 
 //const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
 const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
-var markerStyling= {
-  clear: "both", display: "inline-block", backgroundColor: "#00921A", fontWeight: '500',
-  color: "#FFFFFF", boxShadow: "0 6px 8px 0 rgba(63,63,63,0.11)", borderRadius: "23px",
-  padding: "8px 16px", whiteSpace: "nowrap", width: "160px", textAlign: "center"
-};
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -69,6 +62,38 @@ class TheSite extends React.Component {
         this.get_icons();
     }
 
+    onPlaceSelected = ( place ) => {
+        const address = place.formatted_address,
+        addressArray =  place.address_components,
+        latValue = place.geometry.location.lat(),
+        lngValue = place.geometry.location.lng();
+        // city = this.getCity( addressArray ),
+        // area = this.getArea( addressArray ),
+        // state = this.getState( addressArray ),
+        
+        console.log(address);
+        console.log(latValue);
+        console.log(lngValue);
+        // Set these values in the state.
+        // this.setState({
+        // address: ( address ) ? address : '',
+        // area: ( area ) ? area : '',
+        // city: ( city ) ? city : '',
+        // state: ( state ) ? state : '',
+        // markerPosition: {
+        //     lat: latValue,
+        //     lng: lngValue
+        // },
+        // mapPosition: {
+        //     lat: latValue,
+        //     lng: lngValue
+        // },
+        // })
+        this.state.icons.center = {'lat':latValue, 'lng': lngValue};
+        this.setState({icons: this.state.icons});
+        //todo - get new data
+        };
+
     get_icons = () => {
         fetch(PATH + "api/get_icons")
             .then(response => response.json())
@@ -88,19 +113,23 @@ class TheSite extends React.Component {
     }
 
     render() {
-        const size = 25;
-        console.log(this.state.icons);
-        console.log(this.state.icons.sidewalks);
-        const pth = [{
-                    lat:39.74917208,
-                    lng:-104.9870462
-                }, 
-                {
-                //default
-                    lat:37,
-                    lng:-104.9870462
-                }];
         const InternalMap = props => (
+            <div>
+            <Autocomplete
+                        style={{
+                            align: 'top',
+                            width: '100%',
+                            height: '40px',
+                            paddingLeft: '16px',
+                            marginTop: '2px',
+                            marginBottom: '100px',
+                            position: 'relative',
+                            display: 'inline-block'
+                        }}
+                        onPlaceSelected={this.onPlaceSelected}
+                        types={[]}
+                        componentRestrictions={{country: "usa"}}
+                    />
             <GoogleMap defaultZoom={18} defaultCenter={this.state.icons.center}>
                 {this.state.icons.sidewalks.map((points) => 
                     <Polyline
@@ -152,14 +181,17 @@ class TheSite extends React.Component {
                     icon={signh}
                     />)
                 }
-
-
             </GoogleMap>
+            
+            </div>
             );
 
+
         const MapHoc = withScriptjs(withGoogleMap(InternalMap));
+        
             
         return (
+            <div>
             <StyletronProvider value={engine}>
                 <BaseProvider theme={LightTheme}>
                 <div style={{width:'205px'}}>
@@ -195,17 +227,14 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.right}>
                     <StyledNavigationItem style={{width: '300px'}}>
-                        <Search
-                        // {...options}
-                         type={TYPE.search}
-                        // getOptionLabel={props => props.option.id || null}
-                        // onChange={() => {}}
-                        />
+                        
                     </StyledNavigationItem>
                     </StyledNavigationList>
                 </HeaderNavigation>
                 </div>
-                <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
+                </BaseProvider>
+            </StyletronProvider>
+            <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
                 {this.state.selected == 'guide' &&
                 <p>tbd</p>
                 }
@@ -213,17 +242,19 @@ class TheSite extends React.Component {
                 <p>tbd</p>
                 }
                 {this.state.selected == 'map' &&
+                    <div>
+                    
                     <MapHoc
                         googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + key + "&v=3.exp&libraries=geometry,drawing,places"}
                         loadingElement={<div style={{ height: `100%` }} />}
-                        containerElement={<div style={{ height: `90vh` }} />}
-                        mapElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `90vh`, position: 'relative' }} />}
+                        mapElement={<div style={{ height: `100%`, position: 'relative' }} />}
                     />
-                    
+                    </div>
                 }
                 </div>
-                </BaseProvider>
-            </StyletronProvider>
+            </div>
+
         );
     }
 }
