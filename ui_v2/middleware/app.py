@@ -5,6 +5,8 @@ import requests
 import os
 from flask_cors import CORS
 import json
+from uszipcode import SearchEngine, SimpleZipcode, Zipcode
+search = SearchEngine()
 
 app = Flask(__name__)
 CORS(app)
@@ -15,28 +17,22 @@ with open('sidewalks.json', 'rt') as f:
 with open('moratorium_streets.json', 'rt') as f:
     m_streets = json.loads(f.read())
 
-meters = pd.read_csv('parking_meter_zip.csv').drop_duplicates()
-
 objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
-# 7/1 save df by zipcode in csv
+print(objects.shape, 'objects')
+
 def zip_df(df):
+    '''for later'''
     for i in df["zipcode"].unique():
         temp_df = df[df["zipcode"] == i]
         temp_df.to_csv(i + '.csv', encoding = 'utf-8', index = False)
         
 print('ready!')
 
-def get_zip(df, zipc):
-    gen = df.loc[df.ZIPCODE == zipc,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
-    return [(lat,lng) for lat,lng in gen]
-
 def get_zip_objects(df, zipc):
-    print(df.shape)
-    df = df.loc[df.ZIPCODE == zipc,]
-    print(df.shape)
+    slc = df.loc[df.ZIPCODE == int(zipc),]
     classes = []
-    for i in range(5):
-        gen = df.loc[df.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
+    for i in range(6):
+        gen = slc.loc[slc.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
         classes.append([(lat,lng) for lat,lng in gen])
     return classes
 
@@ -44,15 +40,16 @@ def lin_dist(a,b):
     #TODO - fix this
     return np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
 
-@app.route("/api/get_icons")
-def get_icons():
-    #TODO - get zip from request
-    zipc = 80205
-    #sw = sidewalks[zipc]
-    print(sidewalks.keys())
-    zip_meters = get_zip(meters, zipc)
-    print(len(zip_meters), 'meters in zip', zipc)
-    lamp,signh,fh,nopark,stop = get_zip_objects(objects, zipc)
+@app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
+def get_icons(zipc):
+    if zipc in [80202, 80264] and request.json.get('center'):
+        #check geocoding
+        ct = request.json['center']
+        result = search.by_coordinates(ct['lat'], ct['lng'], radius=3)
+        if result[0].zipcode != zipc:
+            zipc = result[0].zipcode
+            print('adjusted zipc to', zipc)
+    lamp,signh,fh,nopark,stop,meters = get_zip_objects(objects, zipc)
     sw = sidewalks.get(str(zipc), [])
     mst = m_streets.get(str(zipc), [])
     print(len(lamp), 'lamps in zip')
@@ -61,16 +58,10 @@ def get_icons():
     print(len(nopark), 'nopark in zip')
     print(len(stop), 'stop in zip')
     print(len(sw), 'sidewalks in zip')
+    print(len(meters), 'meters in zip', zipc)
     
-    #TODO - get center from request
-    center = dict(lat=39.76895395, lng=-104.9733459)
-    # m_lens = [(coord, lin_dist(coord, center)) for coord in global_meters]
-    # m_lens = sorted(m_lens, key = lambda x: x[1])[:5]
-    # meters = [m[0] for m in m_lens]
-    #samples for demo purposes
-    
-    out=dict(center=center, 
-        meters=zip_meters, 
+    out=dict(
+        meters=meters, 
         hydrants=fh, 
         wheelchairs=signh, 
         lamps=lamp,

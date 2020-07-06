@@ -3,4 +3,5 @@ pandas
 Flask
 flask-cors
 requests
+uszipcode
 #todo - pin versions
