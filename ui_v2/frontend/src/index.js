@@ -26,6 +26,7 @@ import hydrant from "./icons/icons8-fire-hydrant-50.png";
 import nopark from "./icons/icons8-no-parking-48.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
+import ramp from "./icons/icons8-ramp-32.png";
 import Autocomplete from 'react-google-autocomplete';
 
 // Geocode.setApiKey(key);
@@ -55,7 +56,8 @@ class TheSite extends React.Component {
                 'hydrants': [],
                 'nopark': [],
                 'sidewalks': [],
-                'm_streets':[]}
+                'm_streets':[],
+                'ramps':[]}
             };
         this.get_icons();
     }
@@ -150,7 +152,7 @@ class TheSite extends React.Component {
                     <Polyline
                     path={points}
                     options={{
-                        strokeColor: "blue",
+                        strokeColor: "#3498DB",
                         strokeOpacity: 0.75,
                         strokeWeight: 2
                     }}
@@ -160,7 +162,7 @@ class TheSite extends React.Component {
                     <Polyline
                     path={points}
                     options={{
-                        strokeColor: "green",
+                        strokeColor: "#2ECC71",
                         strokeOpacity: 0.75,
                         strokeWeight: 2
                     }}
@@ -188,6 +190,12 @@ class TheSite extends React.Component {
                     <Marker
                     position={{ lat: coords[0], lng: coords[1] }}
                     icon={nopark}
+                    />)
+                }
+                {this.state.icons.ramps.map(coords =>
+                    <Marker
+                    position={coords}
+                    icon={ramp}
                     />)
                 }
                 {this.state.icons.wheelchairs.map(coords =>

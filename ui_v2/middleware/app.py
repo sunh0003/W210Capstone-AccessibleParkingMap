@@ -17,6 +17,9 @@ with open('sidewalks.json', 'rt') as f:
 with open('moratorium_streets.json', 'rt') as f:
     m_streets = json.loads(f.read())
 
+with open('curb_ramps.json', 'rt') as f:
+    ramps = json.loads(f.read())
+
 objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
 print(objects.shape, 'objects')
 
@@ -43,7 +46,7 @@ def lin_dist(a,b):
 @app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
 def get_icons(zipc):
     if zipc in [80202, 80264] and request.json.get('center'):
-        #check geocoding
+        #check geocoding - these zips have some differences between google and uszipcode
         ct = request.json['center']
         result = search.by_coordinates(ct['lat'], ct['lng'], radius=3)
         if result[0].zipcode != zipc:
@@ -52,6 +55,7 @@ def get_icons(zipc):
     lamp,signh,fh,nopark,stop,meters = get_zip_objects(objects, zipc)
     sw = sidewalks.get(str(zipc), [])
     mst = m_streets.get(str(zipc), [])
+    rmp = ramps.get(str(zipc), [])
     print(len(lamp), 'lamps in zip')
     print(len(signh), 'signh in zip')
     print(len(fh), 'fh in zip')
@@ -67,7 +71,8 @@ def get_icons(zipc):
         lamps=lamp,
         nopark = stop+nopark,
         sidewalks= sw,
-        m_streets = mst)
+        m_streets = mst,
+        ramps=rmp)
 
     return jsonify(out)
 
