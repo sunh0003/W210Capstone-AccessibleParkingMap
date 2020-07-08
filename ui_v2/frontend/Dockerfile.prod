@@ -6,6 +6,9 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent
 RUN npm install react-scripts@3.4.1 -g --silent
+RUN npm install --save react-google-maps 
+RUN npm install url-loader
+RUN npm install --save react-google-autocomplete
 COPY . ./
 RUN npm run build
 
