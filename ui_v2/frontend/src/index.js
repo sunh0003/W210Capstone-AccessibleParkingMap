@@ -9,7 +9,8 @@ import {
 } from "react-google-maps";
 import key from './key.js';
 import { Icon } from '@iconify/react';
-import wheelchairAccessibility from '@iconify/icons-mdi/wheelchair-accessibility';
+import chartLineVariant from '@iconify/icons-mdi/chart-line-variant';
+import {Paragraph3} from 'baseui/typography';
 import {
   HeaderNavigation,
   ALIGN,
@@ -18,19 +19,17 @@ import {
 } from "baseui/header-navigation";
 import { StyledLink } from "baseui/link";
 import {BaseProvider, LightTheme} from 'baseui';
+import { ListItem, ListItemLabel } from "baseui/list";
 import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
-
 import signh from "./icons/icons8-assistive-technology-48.png";
 import hydrant from "./icons/icons8-fire-hydrant-50.png";
 import nopark from "./icons/icons8-no-parking-48.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
 import ramp from "./icons/icons8-ramp-32.png";
+import logo from "./icons/logo.png";
 import Autocomplete from 'react-google-autocomplete';
-
-// Geocode.setApiKey(key);
-// Geocode.enableDebug();
 
 //const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
 const PATH='http://localhost:5000/';
@@ -91,13 +90,19 @@ class TheSite extends React.Component {
         }
     }
 
-    get_icons = () => {
+    get_zip = () => {
+        //function to geocode consistently
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ center: this.state.center})
         };
-        fetch(PATH + "api/get_icons/" + this.state.zip, requestOptions)
+    }
+
+    get_icons = () => {
+        console.log(this.state.center);
+        console.log(this.state.zip);
+        fetch(PATH + "api/get_icons/" + this.state.zip)
             .then(response => response.json())
             .then(data => this.setState({'icons':data}));
     }
@@ -111,7 +116,7 @@ class TheSite extends React.Component {
     }
 
     onAbout = () => {
-        this.setState({'selected': 'about'});
+        // this.setState({'selected': 'about'});
     }
 
     
@@ -123,7 +128,7 @@ class TheSite extends React.Component {
         const InternalMap = props => (
             <div>
             
-            <GoogleMap defaultZoom={18} 
+            <GoogleMap defaultZoom={18.5} 
                 defaultCenter={this.state.center}
                 handleOnLoad={this.handleOnLoad}
 
@@ -172,7 +177,8 @@ class TheSite extends React.Component {
                     <Marker
                     position={{ lat: coords[0], lng: coords[1] }}
                     icon={hydrant}
-                    />)
+                    />
+                    )
                 }
                 {this.state.icons.lamps.map(coords =>
                     <Marker
@@ -216,15 +222,16 @@ class TheSite extends React.Component {
             <div>
             <StyletronProvider value={engine}>
                 <BaseProvider theme={LightTheme}>
-                <div style={{width:'205px'}}>
+                <div style={{width:'230px'}}>
                 <HeaderNavigation>
                     <StyledNavigationList $align={ALIGN.left}>
                         <StyledNavigationItem>
-                            <div style={{padding: '5px', display: 'inline-block'}}>
-                                <Icon icon={wheelchairAccessibility} 
-                                    color='blue'/>
+                            <div style={{display: 'inline-block'}}>
+                                <img src={logo}></img>
                             </div>
-                            AccessiPark Denver
+                            <div style={{display: 'inline-block', padding:'2px'}}>
+                                AccessiPark Denver
+                            </div>
                     </StyledNavigationItem>
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.center} />
@@ -254,14 +261,81 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                 </HeaderNavigation>
                 </div>
-                </BaseProvider>
-            </StyletronProvider>
+
             <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
                 {this.state.selected == 'guide' &&
-                <p>tbd</p>
-                }
-                {this.state.selected == 'about' &&
-                <p>tbd</p>
+                    
+                    <div style={{padding: '12px'}}>
+                        <Paragraph3>We scanned Google Street View images with our computer vision model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.</Paragraph3>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={signh}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Accessible Parking - Model</ListItemLabel>
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={park}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Parking Meter - OpenData</ListItemLabel>
+                            
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={nopark}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>No Parking - Model</ListItemLabel>
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel>
+                                <Icon icon={chartLineVariant} 
+                                    color= "#3498DB"
+                                    width="48"
+                                    height="48"/>
+                                </ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Sidewalk - OpenData</ListItemLabel>
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={ramp}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Sidewalk Ramp - OpenData</ListItemLabel>
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel>
+                                <Icon icon={chartLineVariant} 
+                                    color= "#2ECC71"
+                                    width="48"
+                                    height="48"/>
+                                </ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Construction Free Street (Moratorium) - OpenData</ListItemLabel>
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={hydrant}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Fire Hydrant - Model</ListItemLabel>
+                        </ListItem>
+
+                        <ListItem
+                            endEnhancer={() => (
+                                <ListItemLabel><img src={lamp}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Lamp - Model</ListItemLabel>
+                        </ListItem>
+                    </div>
                 }
                 {this.state.selected == 'map' &&
                     <div>
@@ -275,8 +349,9 @@ class TheSite extends React.Component {
                     </div>
                 }
                 </div>
-            </div>
-
+                </BaseProvider>
+            </StyletronProvider>
+        </div>
         );
     }
 }
