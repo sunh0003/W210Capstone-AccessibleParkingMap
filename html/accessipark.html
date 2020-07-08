@@ -1,0 +1,52 @@
+<html>
+<head>
+  <title>AccessiPark - Home </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+  
+</head>
+
+
+<body>
+  <div class="active" id="navbar">
+    <a href="index.html">Home</a>
+    <a href="accessipark.html">AccessiPark MAP</a>
+    <a href="userguide.html">USER GUIDE</a>
+    <a href="methodology.html">METHODOLOGY</a>
+    <a href="aboutus.html">ABOUT US</a>
+  </div>
+  <div>
+    <div class="about-map" id="map">
+      <h1 id="map"> AccessiPark MAP </h1>
+      <p> <b>Target Audience: </b>People who have physical disabilities using assistive aid, such as wheelchair, cane, crutches or walkers. People who want to find the accessible parking easily </p>
+
+      <p> <b> Icons in the map:</b> (1) Accessible parking lot (2) Pole (3) Fire hydrant (4) No parking signs (5) stop signs (6) parkig meters </p>
+
+      <br />
+    </div>
+  </div>
+
+  <div>
+        <img src="screenshot_map.png" alt="Olympic" style="width:100%;">
+  </div>
+
+
+  <script>
+        window.onscroll = function() { myFunction() };
+
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+  </script>
+
+</body>
+
+
+</html>

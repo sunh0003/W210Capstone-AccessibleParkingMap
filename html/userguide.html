@@ -1,0 +1,45 @@
+<html>
+<head>
+  <title>AccessiPark - UserGuide </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+
+
+<body>
+	<div class="active" id="navbar">
+		<a href="index.html">Home</a>
+        <a href="accessipark.html">AccessiPark MAP</a>
+        <a href="userguide.html">USER GUIDE</a>
+        <a href="methodology.html">METHODOLOGY</a>
+        <a href="aboutus.html">ABOUT US</a>
+    </div>
+
+   <div>
+    <div class="about-map" id="map">
+      <h1 id="map"> User Guide </h1>
+      <p> This section described how potential users negative to their destinations using follow steps. </p>
+
+      <br />
+    </div>
+   </div>
+
+    <script>
+        window.onscroll = function() { myFunction() };
+
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+    </script>
+
+</body>
+
+
+</html>
