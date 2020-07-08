@@ -43,15 +43,14 @@ def lin_dist(a,b):
     #TODO - fix this
     return np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
 
+@app.route("/api/get_zip", methods=['POST'])
+def get_zip():
+    ct = request.json['center']
+    result = search.by_coordinates(ct['lat'], ct['lng'], radius=3)
+    return jsonify(result[0].zipcode)
+
 @app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
 def get_icons(zipc):
-    if zipc in [80202, 80264] and request.json.get('center'):
-        #check geocoding - these zips have some differences between google and uszipcode
-        ct = request.json['center']
-        result = search.by_coordinates(ct['lat'], ct['lng'], radius=3)
-        if result[0].zipcode != zipc:
-            zipc = result[0].zipcode
-            print('adjusted zipc to', zipc)
     lamp,signh,fh,nopark,stop,meters = get_zip_objects(objects, zipc)
     sw = sidewalks.get(str(zipc), [])
     mst = m_streets.get(str(zipc), [])

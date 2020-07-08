@@ -45,10 +45,10 @@ class TheSite extends React.Component {
             selected: 'map', //initial tab selection
             center:  {
                 //default
-                    lat:39.74528706,
-                    lng:-104.99208540000001
+                    lat:39.7673134 ,
+                    lng:-104.9770917
                 },
-            'zip': 80264,
+            'zip': 80205,
             icons: {'wheelchairs':[], 
                 'meters':[], 
                 'lamps': [], 
@@ -62,31 +62,24 @@ class TheSite extends React.Component {
     }
 
     onPlaceSelected = ( place ) => {
-        console.log(place);
-        const address = place.formatted_address,
-        addressArray =  place.address_components,
-        latValue = place.geometry.location.lat(),
-        lngValue = place.geometry.location.lng();
-        console.log(addressArray[6].types);
-        var zip = this.state.zip;
-        if (addressArray[6].types.includes('postal_code')){
-            zip = addressArray[6]['short_name'];
-        }else if(addressArray[7].types.includes('postal_code')){
-            zip = addressArray[7]['short_name'];
-        }else{
-            zip = addressArray[8]['short_name'];
-        }
-        const center = {'lat':latValue, 'lng': lngValue};
-        this.setState({center: center});
-        console.log(zip);
-        console.log(this.state.zip);
-        if (zip != this.state.zip){
-            this.setState({zip:zip});
-            this.get_icons(); //TODO - send center point to check geocoding
-            //80202, 80264 
-        } else {
-            console.log('same zip');
-            console.log(latValue, lngValue);
+        if (place){
+            console.log(place);
+            const latValue = place.geometry.location.lat(),
+            lngValue = place.geometry.location.lng();
+
+            const center = {'lat':latValue, 'lng': lngValue};
+            this.setState({center: center});
+            console.log('old zip ' + this.state.zip);
+            var old_zip = this.state.zip.valueOf();
+            console.log('old zip');
+            this.get_zip();
+            console.log('new zip ' + this.state.zip);
+            if (old_zip != this.state.zip){
+                this.get_icons();
+            } else {
+                console.log('same zip');
+                console.log(latValue, lngValue);
+            }
         }
     }
 
@@ -97,6 +90,9 @@ class TheSite extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ center: this.state.center})
         };
+        fetch(PATH + "api/get_zip", requestOptions)
+            .then(response => response.json())
+            .then(data => this.setState({'zip':data}));
     }
 
     get_icons = () => {
@@ -266,7 +262,7 @@ class TheSite extends React.Component {
                 {this.state.selected == 'guide' &&
                     
                     <div style={{padding: '12px'}}>
-                        <Paragraph3>We scanned Google Street View images with our computer vision model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.</Paragraph3>
+                        <Paragraph3>We scanned Google Street View images with our computer vision model and augmented the results with Denver OpenData to map accessible parking and mobility obstacles.</Paragraph3>
                         <ListItem
                             endEnhancer={() => (
                                 <ListItemLabel><img src={signh}/></ListItemLabel>

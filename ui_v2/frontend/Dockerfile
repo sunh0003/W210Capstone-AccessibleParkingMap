@@ -15,10 +15,7 @@ RUN npm install
 RUN npm install @iconify/react@1.1.3 
 RUN npm install --save react-google-maps 
 RUN npm install url-loader
-RUN npm install --save react-geocode
 RUN npm install --save react-google-autocomplete
-RUN npm install baseui-list
-
 # add app
 COPY . ./
 
