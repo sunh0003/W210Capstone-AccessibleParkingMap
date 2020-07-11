@@ -27,14 +27,17 @@ import hydrant from "./icons/icons8-fire-hydrant-50.png";
 import nopark from "./icons/icons8-no-parking-48.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
-import ramp from "./icons/icons8-ramp-32.png";
+import ramp from "./icons/icons8-triangle-24.png";
 import logo from "./icons/logo.png";
 import Autocomplete from 'react-google-autocomplete';
 
-const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
-//const PATH='http://localhost:5000/';
+//const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
+const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
+const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
+//this doesn't seem to actually bar results from the autocomplete but it might prioritize
+//had to restrict manually with this.in_bounds()
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -56,9 +59,19 @@ class TheSite extends React.Component {
                 'nopark': [],
                 'sidewalks': [],
                 'm_streets':[],
-                'ramps':[]}
+                'ramps':[]},
+            text: 'We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.'
             };
         this.get_icons();
+    }
+
+    handleErrors = (response) => {
+        if (!response.ok) {
+            this.setState({
+                text: 'Oops! Something went wrong.'});
+            throw Error(response.statusText);
+        }
+        return response;
     }
 
     onPlaceSelected = ( place ) => {
@@ -68,18 +81,38 @@ class TheSite extends React.Component {
             lngValue = place.geometry.location.lng();
 
             const center = {'lat':latValue, 'lng': lngValue};
-            this.setState({center: center});
-            console.log('old zip ' + this.state.zip);
-            var old_zip = this.state.zip.valueOf();
-            console.log('old zip');
-            this.get_zip();
-            console.log('new zip ' + this.state.zip);
-            if (old_zip != this.state.zip){
-                this.get_icons();
-            } else {
-                console.log('same zip');
-                console.log(latValue, lngValue);
+            if (this.in_bounds(center)){
+                console.log('in bounds');
+                this.setState({center: center,
+                    text: 'Viewing features near '+place.formatted_address+'.'
+                });
+                console.log('old zip ' + this.state.zip);
+                var old_zip = this.state.zip.valueOf();
+                console.log('old zip');
+                this.get_zip();
+                console.log('new zip ' + this.state.zip);
+                if (old_zip != this.state.zip){
+                    this.get_icons();
+                } else {
+                    console.log('same zip');
+                    console.log(latValue, lngValue);
+                }
+            }else{
+                this.setState({'text':'Location '+place.formatted_address+' is out of bounds.'});
             }
+            
+        }
+    }
+
+    in_bounds = (center) => {
+        const b = bounds;
+        const c = center;
+        console.log(b);
+        console.log(c);
+        if (b[0].lat <= c.lat && c.lat <= b[1].lat && b[0].lng <= c.lng && c.lng <=b[1].lng){
+            return(true);
+        }else{
+            return(false);
         }
     }
 
@@ -91,6 +124,7 @@ class TheSite extends React.Component {
             body: JSON.stringify({ center: this.state.center})
         };
         fetch(PATH + "api/get_zip", requestOptions)
+            .then(this.handleErrors)
             .then(response => response.json())
             .then(data => this.setState({'zip':data}));
     }
@@ -99,6 +133,7 @@ class TheSite extends React.Component {
         console.log(this.state.center);
         console.log(this.state.zip);
         fetch(PATH + "api/get_icons/" + this.state.zip)
+            .then(this.handleErrors)
             .then(response => response.json())
             .then(data => this.setState({'icons':data}));
     }
@@ -110,24 +145,13 @@ class TheSite extends React.Component {
     onGuide = () => {
         this.setState({'selected': 'guide'});
     }
-
-    onAbout = () => {
-        // this.setState({'selected': 'about'});
-    }
-
-    
-
     
     render() {
-        
-
         const InternalMap = props => (
             <div>
             
             <GoogleMap defaultZoom={18.5} 
                 defaultCenter={this.state.center}
-                handleOnLoad={this.handleOnLoad}
-
                 >
                 <Autocomplete
                     style={{
@@ -144,6 +168,7 @@ class TheSite extends React.Component {
                     onPlaceSelected={this.onPlaceSelected}
                     types={[]}
                     componentRestrictions={{country: "usa"}}
+                    //bounds={bounds} #this throws error i'm not sure how to solve
                     position={this.state.center}
                 />
                 <Marker
@@ -245,15 +270,10 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.right}>
                         <StyledNavigationItem>
-                            <StyledLink href='#' onClick={this.onAbout}>
+                            <StyledLink href='#'>
                                 About This Project
                             </StyledLink>
                         </StyledNavigationItem>
-                    </StyledNavigationList>
-                    <StyledNavigationList $align={ALIGN.right}>
-                    <StyledNavigationItem style={{width: '300px'}}>
-                        
-                    </StyledNavigationItem>
                     </StyledNavigationList>
                 </HeaderNavigation>
                 </div>
@@ -262,7 +282,7 @@ class TheSite extends React.Component {
                 {this.state.selected == 'guide' &&
                     
                     <div style={{padding: '12px'}}>
-                        <Paragraph3>We scanned Google Street View images with our computer vision model and augmented the results with Denver OpenData to map accessible parking and mobility obstacles.</Paragraph3>
+                        <Paragraph3>We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.</Paragraph3>
                         <ListItem
                             endEnhancer={() => (
                                 <ListItemLabel><img src={signh}/></ListItemLabel>
@@ -335,7 +355,7 @@ class TheSite extends React.Component {
                 }
                 {this.state.selected == 'map' &&
                     <div>
-                    
+                    <Paragraph3>{this.state.text}</Paragraph3>
                     <MapHoc
                         googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + key + "&v=3.exp&libraries=geometry,drawing,places"}
                         loadingElement={<div style={{ height: `100%` }} />}
