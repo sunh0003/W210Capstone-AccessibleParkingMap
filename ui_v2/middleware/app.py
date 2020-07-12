@@ -11,6 +11,8 @@ search = SearchEngine()
 app = Flask(__name__)
 CORS(app)
 
+PATH = '20200711csv'
+
 with open('sidewalks.json', 'rt') as f:
     sidewalks = json.loads(f.read())
 
@@ -20,8 +22,8 @@ with open('moratorium_streets.json', 'rt') as f:
 with open('curb_ramps.json', 'rt') as f:
     ramps = json.loads(f.read())
 
-objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
-print(objects.shape, 'objects')
+# objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
+# print(objects.shape, 'objects')
 
 def zip_df(df):
     '''for later'''
@@ -31,11 +33,12 @@ def zip_df(df):
         
 print('ready!')
 
-def get_zip_objects(df, zipc):
-    slc = df.loc[df.ZIPCODE == int(zipc),]
+def get_zip_objects(zipc):
+    df = pd.read_csv(f'{PATH}/{zipc}.csv')
+    print(df.shape)
     classes = []
     for i in range(6):
-        gen = slc.loc[slc.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
+        gen = df.loc[df['class']==i,].groupby(['lat', 'long']).apply(len).index.tolist()
         classes.append([(lat,lng) for lat,lng in gen])
     return classes
 
@@ -51,7 +54,7 @@ def get_zip():
 
 @app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
 def get_icons(zipc):
-    lamp,signh,fh,nopark,stop,meters = get_zip_objects(objects, zipc)
+    lamp,signh,fh,nopark,stop,meters = get_zip_objects(zipc)
     sw = sidewalks.get(str(zipc), [])
     mst = m_streets.get(str(zipc), [])
     rmp = ramps.get(str(zipc), [])

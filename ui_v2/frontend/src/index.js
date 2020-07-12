@@ -150,7 +150,7 @@ class TheSite extends React.Component {
         const InternalMap = props => (
             <div>
             
-            <GoogleMap defaultZoom={18.5} 
+            <GoogleMap defaultZoom={19} 
                 defaultCenter={this.state.center}
                 >
                 <Autocomplete
