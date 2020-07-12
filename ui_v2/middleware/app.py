@@ -11,7 +11,7 @@ search = SearchEngine()
 app = Flask(__name__)
 CORS(app)
 
-PATH = '20200712csv'
+PATH = '20200712csvp2'
 
 with open('sidewalks.json', 'rt') as f:
     sidewalks = json.loads(f.read())

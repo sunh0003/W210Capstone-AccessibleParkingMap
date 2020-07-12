@@ -18,7 +18,7 @@ import {
   StyledNavigationItem
 } from "baseui/header-navigation";
 import { StyledLink } from "baseui/link";
-import {BaseProvider, LightTheme} from 'baseui';
+import {BaseProvider, LightTheme, DarkTheme} from 'baseui';
 import { ListItem, ListItemLabel } from "baseui/list";
 import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
@@ -38,6 +38,12 @@ const engine = new Styletron();
 const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
 //this doesn't seem to actually bar results from the autocomplete but it might prioritize
 //had to restrict manually with this.in_bounds()
+
+var lineSymbol = {
+    path: "M 0,-1 0,1",
+    strokeOpacity: 1,
+    scale: 4
+  };
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -179,8 +185,14 @@ class TheSite extends React.Component {
                     path={points}
                     options={{
                         strokeColor: "#3498DB",
-                        strokeOpacity: 0.75,
-                        strokeWeight: 2
+                        strokeOpacity: 0,
+                        icons: [
+      {
+        icon: lineSymbol,
+        offset: "0",
+        repeat: "20px"
+      }
+    ]
                     }}
                     />
                 )}
@@ -270,7 +282,7 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.right}>
                         <StyledNavigationItem>
-                            <StyledLink href='#'>
+                            <StyledLink href='http://people.ischool.berkeley.edu/~richard.ryu/methodology.html'>
                                 About This Project
                             </StyledLink>
                         </StyledNavigationItem>
@@ -278,7 +290,7 @@ class TheSite extends React.Component {
                 </HeaderNavigation>
                 </div>
 
-            <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
+            <div style={{ height: '100%', width: '100%', padding: '12px'}}>
                 {this.state.selected === 'guide' &&
 
                     <div style={{padding: '12px'}}>
