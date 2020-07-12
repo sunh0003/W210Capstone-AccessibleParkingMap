@@ -11,7 +11,7 @@ search = SearchEngine()
 app = Flask(__name__)
 CORS(app)
 
-PATH = '20200711csv'
+PATH = '20200712csv'
 
 with open('sidewalks.json', 'rt') as f:
     sidewalks = json.loads(f.read())
@@ -30,7 +30,7 @@ def zip_df(df):
     for i in df["zipcode"].unique():
         temp_df = df[df["zipcode"] == i]
         temp_df.to_csv(i + '.csv', encoding = 'utf-8', index = False)
-        
+
 print('ready!')
 
 def get_zip_objects(zipc):
@@ -65,11 +65,11 @@ def get_icons(zipc):
     print(len(stop), 'stop in zip')
     print(len(sw), 'sidewalks in zip')
     print(len(meters), 'meters in zip', zipc)
-    
+
     out=dict(
-        meters=meters, 
-        hydrants=fh, 
-        wheelchairs=signh, 
+        meters=meters,
+        hydrants=fh,
+        wheelchairs=signh,
         lamps=lamp,
         nopark = stop+nopark,
         sidewalks= sw,

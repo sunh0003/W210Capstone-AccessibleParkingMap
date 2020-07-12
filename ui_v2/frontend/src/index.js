@@ -52,9 +52,9 @@ class TheSite extends React.Component {
                     lng:-104.9770917
                 },
             'zip': 80205,
-            icons: {'wheelchairs':[], 
-                'meters':[], 
-                'lamps': [], 
+            icons: {'wheelchairs':[],
+                'meters':[],
+                'lamps': [],
                 'hydrants': [],
                 'nopark': [],
                 'sidewalks': [],
@@ -91,7 +91,7 @@ class TheSite extends React.Component {
                 console.log('old zip');
                 this.get_zip();
                 console.log('new zip ' + this.state.zip);
-                if (old_zip != this.state.zip){
+                if (old_zip !== this.state.zip){
                     this.get_icons();
                 } else {
                     console.log('same zip');
@@ -100,7 +100,7 @@ class TheSite extends React.Component {
             }else{
                 this.setState({'text':'Location '+place.formatted_address+' is out of bounds.'});
             }
-            
+
         }
     }
 
@@ -145,12 +145,12 @@ class TheSite extends React.Component {
     onGuide = () => {
         this.setState({'selected': 'guide'});
     }
-    
+
     render() {
         const InternalMap = props => (
             <div>
-            
-            <GoogleMap defaultZoom={19} 
+
+            <GoogleMap defaultZoom={19}
                 defaultCenter={this.state.center}
                 >
                 <Autocomplete
@@ -174,7 +174,7 @@ class TheSite extends React.Component {
                 <Marker
                     position={this.state.center}
                 />
-                {this.state.icons.sidewalks.map((points) => 
+                {this.state.icons.sidewalks.map((points) =>
                     <Polyline
                     path={points}
                     options={{
@@ -184,7 +184,7 @@ class TheSite extends React.Component {
                     }}
                     />
                 )}
-                {this.state.icons.m_streets.map((points) => 
+                {this.state.icons.m_streets.map((points) =>
                     <Polyline
                     path={points}
                     options={{
@@ -237,8 +237,8 @@ class TheSite extends React.Component {
 
 
         const MapHoc = withScriptjs(withGoogleMap(InternalMap));
-        
-            
+
+
         return (
             <div>
             <StyletronProvider value={engine}>
@@ -279,8 +279,8 @@ class TheSite extends React.Component {
                 </div>
 
             <div style={{ height: '90vh', width: '100%', padding: '12px'}}>
-                {this.state.selected == 'guide' &&
-                    
+                {this.state.selected === 'guide' &&
+
                     <div style={{padding: '12px'}}>
                         <Paragraph3>We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.</Paragraph3>
                         <ListItem
@@ -296,7 +296,7 @@ class TheSite extends React.Component {
                             )}
                             >
                             <ListItemLabel>Parking Meter - OpenData</ListItemLabel>
-                            
+
                         </ListItem>
                         <ListItem
                             endEnhancer={() => (
@@ -308,7 +308,7 @@ class TheSite extends React.Component {
                         <ListItem
                             endEnhancer={() => (
                                 <ListItemLabel>
-                                <Icon icon={chartLineVariant} 
+                                <Icon icon={chartLineVariant}
                                     color= "#3498DB"
                                     width="48"
                                     height="48"/>
@@ -327,7 +327,7 @@ class TheSite extends React.Component {
                         <ListItem
                             endEnhancer={() => (
                                 <ListItemLabel>
-                                <Icon icon={chartLineVariant} 
+                                <Icon icon={chartLineVariant}
                                     color= "#2ECC71"
                                     width="48"
                                     height="48"/>
@@ -353,7 +353,7 @@ class TheSite extends React.Component {
                         </ListItem>
                     </div>
                 }
-                {this.state.selected == 'map' &&
+                {this.state.selected === 'map' &&
                     <div>
                     <Paragraph3>{this.state.text}</Paragraph3>
                     <MapHoc
