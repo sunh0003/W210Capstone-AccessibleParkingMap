@@ -39,6 +39,7 @@ const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.968
 //this doesn't seem to actually bar results from the autocomplete but it might prioritize
 //had to restrict manually with this.in_bounds()
 
+
 var lineSymbol = {
     path: "M 0,-1 0,1",
     strokeOpacity: 1,
@@ -190,7 +191,7 @@ class TheSite extends React.Component {
       {
         icon: lineSymbol,
         offset: "0",
-        repeat: "20px"
+        repeat: "40px"
       }
     ]
                     }}
@@ -201,8 +202,14 @@ class TheSite extends React.Component {
                     path={points}
                     options={{
                         strokeColor: "#2ECC71",
-                        strokeOpacity: 0.75,
-                        strokeWeight: 2
+                        strokeOpacity: 0,
+                        icons: [
+      {
+        icon: lineSymbol,
+        offset: "0",
+        repeat: "20px"
+      }
+    ]
                     }}
                     />
                 )}
@@ -229,12 +236,6 @@ class TheSite extends React.Component {
                     <Marker
                     position={{ lat: coords[0], lng: coords[1] }}
                     icon={nopark}
-                    />)
-                }
-                {this.state.icons.ramps.map(coords =>
-                    <Marker
-                    position={coords}
-                    icon={ramp}
                     />)
                 }
                 {this.state.icons.wheelchairs.map(coords =>
@@ -328,13 +329,6 @@ class TheSite extends React.Component {
                             )}
                             >
                             <ListItemLabel>Sidewalk - OpenData</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={ramp}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Sidewalk Ramp - OpenData</ListItemLabel>
                         </ListItem>
                         <ListItem
                             endEnhancer={() => (
