@@ -75,7 +75,7 @@ class TheSite extends React.Component {
     }
 
     onPlaceSelected = ( place ) => {
-        if (place){
+        if (place.geometry){
             console.log(place);
             const latValue = place.geometry.location.lat(),
             lngValue = place.geometry.location.lng();
