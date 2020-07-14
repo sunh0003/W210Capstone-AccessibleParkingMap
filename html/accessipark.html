@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>AccessiPark - Home </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+  
+</head>
+
+
+<body>
+  <div class="active" id="navbar">
+    <a href="index.html">Home</a>
+    <a href="accessipark.html">AccessiPark MAP</a>
+    <a href="userguide.html">USER GUIDE</a>
+    <a href="methodology.html">METHODOLOGY</a>
+    <a href="aboutus.html">ABOUT US</a>
+  </div>
+  <div>
+    <div class="about-map" id="map">
+      <h1 id="map"> AccessiPark MAP </h1>
+      <p> <b>Target Audience: </b>People who have physical disabilities using assistive aid, such as wheelchair, cane, crutches or walkers. People who want to find the accessible parking easily </p>
+
+      <p> <b> Icons in the map:</b> (1) Accessible parking lot (2) Pole (3) Fire hydrant (4) No parking signs (5) stop signs (6) parkig meters </p>
+
+      <br />
+    </div>
+  </div>
+
+  <!--div-->
+        <!--img src="screenshot_map.png" alt="Olympic" style="width:100%;"-->
+  <!--/div-->
+  <div class='tableauPlaceholder' id='viz1594751229586' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;XP&#47;XPH8XNSJN&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='path' value='shared&#47;XPH8XNSJN' /> <param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;XP&#47;XPH8XNSJN&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1594751229586');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+
+
+  <script>
+        window.onscroll = function() { myFunction() };
+
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+  </script>
+
+</body>
+
+
+</html>
