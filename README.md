@@ -19,22 +19,22 @@ We're creating an [accessible parking map](http://ec2-54-183-149-77.us-west-1.co
 ### Custom Labelling
 * Used [labelImg](https://github.com/tzutalin/labelImg) to draw bounding boxes for 5 classes on 2500 images
 
-<img src="images/classes.png" width="400" height="400" />
+<img src="images/classes.png" width="400" height="600" class="center"/>
 
 ### System architecture
 
-<img src="images/arch.png" width="500" height="500" />
+<img src="images/arch.png" width="500" height="800" class="center"/>
 
 ### Model Methodology
 * Inspired by [Roboflow's YOLOv5 notebook](https://blog.roboflow.ai/how-to-train-yolov5-on-a-custom-dataset/), we implemented YOLOv5 on our custom labelled images
 
 * Data split
-  - train (70%)
-  - test (30%)
+  - **train** (70%)
+  - **test** (30%)
 
 * Leveraged [Google Colab](https://colab.research.google.com/github/tensorflow/examples/blob/master/courses/udacity_intro_to_tensorflow_for_deep_learning/l01c01_introduction_to_colab_and_python.ipynb) and [TensorFlow](https://www.tensorflow.org/tutorials) for both training and inference
 
-* mean Average Precision (mAP) was used for model evaluation
+* **mean Average Precision (mAP)** was used for model evaluation
   - mAP@0.5 = 63
 
 * We won't go into much detail about YOLOv5 since this page is intended to explain how we were able to come up with AccessiPark map. For more information about YOLOv5, please visit [Roboflow's YOLOv5 blog](https://blog.roboflow.ai/yolov5-improvements-and-evaluation/)
@@ -42,11 +42,11 @@ We're creating an [accessible parking map](http://ec2-54-183-149-77.us-west-1.co
 * Inference
   - We used YOLOv5 pre-trained weights to detect 5 objects on ~200,000 images of downtown Denver
 
-<img src="images/infer.png" width="500" height="500" />
+<img src="images/infer.png" width="500" height="500" class="center"/>
 
 ### Feature Engineering
 
-<img src="images/infers2.png" width="300" height="300" />
+<img src="images/infers2.png" width="300" height="700" class="center"/>
 
 The bounding boxes from the inference above are saved in a csv format. Above is an example of the csv file in pandas DF. In order to plot this on our AccessiPark map, we've listed the necessary feature engineering below:
 
@@ -105,4 +105,4 @@ The bounding boxes from the inference above are saved in a csv format. Above is 
 
 * [icons for objects](https://icons8.com/)
 
-<img src="images/icons.png" width="300" height="300" />
+<img src="images/icons.png" width="300" height="300" class="center"/>
