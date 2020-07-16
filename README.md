@@ -33,7 +33,7 @@ We're creating an [accessible parking map](http://ec2-54-183-149-77.us-west-1.co
 * Leveraged [Google Colab](https://colab.research.google.com/github/tensorflow/examples/blob/master/courses/udacity_intro_to_tensorflow_for_deep_learning/l01c01_introduction_to_colab_and_python.ipynb) and [TensorFlow](https://www.tensorflow.org/tutorials) for both training and inference
 
 * **mean Average Precision (mAP)** was used for model evaluation
-<img src="images/mAP.png" width="700" height="300" align="middle"/>
+<img src="images/mAP.png" width="700" height="150" align="middle"/>
 
 * We won't go into much detail about YOLOv5 since this page is intended to explain how we were able to come up with AccessiPark map. For more information about YOLOv5, please visit [Roboflow's YOLOv5 blog](https://blog.roboflow.ai/yolov5-improvements-and-evaluation/)
 
