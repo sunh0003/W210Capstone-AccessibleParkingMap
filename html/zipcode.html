@@ -1,0 +1,55 @@
+<html>
+<head>
+  <title>zipcode analysis - Home </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+
+</head>
+
+
+<body>
+  <div class="active" id="navbar">
+    <a href="index.html">HOME</a>
+    <a href="http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:3001/">AccessiPark MAP</a>
+    <a href="zipcode.html">ZIPCODE ANALYSIS</a>
+    <!--a href="userguide.html">USER GUIDE</a-->
+    <a href="methodology.html">METHODOLOGY</a>
+    <a href="aboutus.html">ABOUT US</a>
+    <!--a href="contact.html">CONTACT US</a-->
+  </div>
+  <div>
+    <div class="about-map" id="map">
+      <h1 id="map"> ZIPCODE ANALYSIS - AREA RATING</h1>
+      <p> <b>Target Audience: </b>People who have physical disabilities using assistive aid, such as wheelchair, cane, crutches or walkers. People who want to find the accessible parking easily </p>
+
+      <p> <b> Handicap Parking Density Map: </b>  In the below map, the number of handicap parkings are plotted per zipcode in Denver City. One can observe that high density of handicap parking is located in the central region of Denver also Downtowan areas of Denver (top left). </p>
+
+      <br />
+    </div>
+  </div>
+
+  <!--div-->
+        <!--img src="screenshot_map.png" alt="Olympic" style="width:100%;"-->
+  <!--/div-->
+  <div class='tableauPlaceholder' id='viz1595012544624' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;De&#47;DenverHandicapSignCntbyZipCode&#47;Sheet1&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='DenverHandicapSignCntbyZipCode&#47;Sheet1' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;De&#47;DenverHandicapSignCntbyZipCode&#47;Sheet1&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1595012544624');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+
+
+  <script>
+        window.onscroll = function() { myFunction() };
+
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+  </script>
+
+</body>
+
+
+</html>

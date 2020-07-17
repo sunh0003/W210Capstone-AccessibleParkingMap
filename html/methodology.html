@@ -1,0 +1,107 @@
+<html>
+<head>
+  <title>AccessiPark - Methodology </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+
+
+<body>
+	<div class="active" id="navbar">
+    <a href="index.html">HOME</a>
+    <a href="http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:3001/">AccessiPark MAP</a>
+    <a href="zipcode.html">ZIPCODE ANALYSIS</a>
+    <!--a href="userguide.html">USER GUIDE</a-->
+    <a href="methodology.html">METHODOLOGY</a>
+    <a href="aboutus.html">ABOUT US</a>
+    <!--a href="contact.html">CONTACT US</a-->
+    </div>
+
+    <div>
+      <div class="about-map" id="map">
+        <h1 id="map"> Methodology </h1>
+        <p> This section describes how data is collected and how the model works </p>
+
+        <br />
+      </div>
+    </div>
+
+
+    <!--below is the sticky bar-->
+
+     <script>
+        window.onscroll = function() { myFunction() };
+
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+     </script>
+
+     <div style="background-color:#F0EDEC" class="about-text-narrow">
+                <span class="img-container">
+                  <img src="steps.png" alt="Olympic" style="width:70%;">
+                </span>
+                <br/><br/>
+                <div class="about-text-wide">
+                	<hr>
+                	<h2> <b> <P>PROBLEM STATEMENT</P></b> </h2>
+                	<hr>
+                	<h3><b> Problem 1: Street-level Accessibility </b> </h3>
+                	<p> According to US Census (2010), 30.6 million individual have physical disabilities. Among these, nearly half are using an assistive aid such as wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many cities streets, sidewalks, and businesses in the US remain inaccessible. It is undoubtful that sidewalk accessibility fundamentally affects where and how people travel in cities. Only few, if any, mechanisms are used to determin the accessible areas of a city needs. Based on the survey from Ntational Council of Disability, people couldn't find comprehensive information on the "degree to which sidewalks are accessible" across the U.S. Tranditionally, the sidewalk accessment was conducted via in-person street audits or via citizen call-in reports which is labor intensive and costly. <br/>
+                	<h3> <b> Problem 2: Accessible Parking is not Easy to Find</b> </h3>
+                	Based on the survey conducted by Accessible Parking Coalition, 69% of people with disabilities have prolems finding accessible parking in their communities. 96% say parking availability is important to leading an independent life. 70% say their decision to drive or ride is influenced by parking availablity. 62% would like to drive or ride if parking was more available. 52% have decided not to make a trip because of concerns about finding parking. Clearly, accessible parking create a problem for disabled people. There is no clear method to identigy accessible parking on a map easily (even Google map doesn't provide this functionality).<br/>
+                	</p>
+                	<br />
+                	<hr>
+                	<h2> <strong> MISSION STATEMENT</strong> </h2>
+                	<hr>
+                	<p> <b>OUR MISSION - help people with physical disabilities reduce street-level accessibility problems and find handicap parking easily. </b></p>
+                	<p> For our prototype, we choose Denver as pilot city to deploy our prodcut as one of our group members resides in Denver and hence facilitate the prototype user test.</p>
+                	<br />
+                	<hr>
+                	<h2> <b>GATHER DATA</b></h2>
+                	<hr>
+                	<p> We used ArcGIS Pro to get various street location as points with latitude and longitude. After that, we use Google Static Streetview API to download google streetview images with resolution of 640x640. For model model train/test, Denver downtown area images (~6000 images) were downloaded. For model inference, areas outside Denver downtown (points with latitude/longitude) were selected and used. In total, we have over 200,000 images with the size larger than 10 GB. </p>
+                	<br />
+                    <img src="data.png" alt="objectdetector" style="width:50%;">
+                    <br />
+                	<hr>
+                	<h2> <b>MODEL</b> </h2>
+                	<hr>
+                	<p> We split the data (Denver downtown area) into train/test/validation with 70/30/30 ratio. Two models (1) EfficientDet (2) yolo v5 were trained with custome dataset using TRANSFER LEARNING  with pre-train weight. These two models are choosen due to small model size and less parameters to train (less time to train). For training, we use TensorFlow with Google Colab and extract the weights for model inference. In terms of model performance, mean Average precious (mAP) is used as model metrics to evaluation model performance. model Yolo v5 has higher model performance compared to efficientDet (mAP@0.5 = 63  for yolo v5 model & mAP@0.5=0.45 for efficientDet model). </p>
+                	<img src="objectdetector.jpeg" alt="objectdetector" style="width:70%;">
+                	<p> Fig. schematic of object detector architecture</p>
+                	<img src="efficientdet.png" alt="efficientdet" style="width:70%;">
+                	<p> Fig. schematic of efficientDet architecture</p>
+                	<br />
+                	<hr>
+                	<h2> <b>INFERENCE </b></h2>
+                	<hr>
+                	<p> Inference was conducted using the yolo v5 trained weights and detect objects (5 classes) with 200,000 images (Denver outside downtown area). The results are summarized in a csv file with object latitude, longitude, confidence level, bounding box coordinates. Some sample inference output are shown below. This csv file is fed to product pipeline and plot icons on google map for user visulization. </p>
+                    <hr>
+                    
+                	<img src="sampleinfer.png" alt="sampleinfer" style="width:50%;">
+                  	<br />
+                    <br>
+                	<hr>
+                	<h2> <b>VISUALIZATION</b></h2>
+                    <hr>
+                    <p> Above picture shows the architecture of product. Local Batch is conducted to do ETL and implement busienss logic. AWS S3 is leveraged to store labelled images, models, and inference results. Google Colab was used to conduct model training/testing/validation and model inference. The inference pictures are downloaded and stored back to S3. AWS EC2 T-instance is used to have Docker container which use Flask and Reach to host our front-end applications. </p>
+                	<br>
+                    <img src="architecture.png" alt="sampleinfer" style="width:70%;">
+                    <br>
+                    <br>
+                    <hr>
+                </div>
+            </div>
+</body>
+
+
+</html>
