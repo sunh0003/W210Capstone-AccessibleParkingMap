@@ -11,7 +11,7 @@ search = SearchEngine()
 app = Flask(__name__)
 CORS(app)
 
-PATH = '20200708csv'
+PATH = '20200711csv'
 
 with open('sidewalks.json', 'rt') as f:
     sidewalks = json.loads(f.read())
@@ -21,6 +21,9 @@ with open('moratorium_streets.json', 'rt') as f:
 
 with open('curb_ramps.json', 'rt') as f:
     ramps = json.loads(f.read())
+
+with open('facilities.json', 'rt') as f:
+    facilities = json.loads(f.read())
 
 # objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
 # print(objects.shape, 'objects')
@@ -42,10 +45,6 @@ def get_zip_objects(zipc):
         classes.append([(lat,lng) for lat,lng in gen])
     return classes
 
-def lin_dist(a,b):
-    #TODO - fix this
-    return np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
-
 @app.route("/api/get_zip", methods=['POST'])
 def get_zip():
     ct = request.json['center']
@@ -58,13 +57,15 @@ def get_icons(zipc):
     sw = sidewalks.get(str(zipc), [])
     mst = m_streets.get(str(zipc), [])
     rmp = ramps.get(str(zipc), [])
-    print(len(lamp), 'lamps in zip')
-    print(len(signh), 'signh in zip')
-    print(len(fh), 'fh in zip')
-    print(len(nopark), 'nopark in zip')
-    print(len(stop), 'stop in zip')
-    print(len(sw), 'sidewalks in zip')
+    fac = facilities.get(str(zipc), [])
+    print(len(lamp), 'lamps in zip', zipc)
+    print(len(signh), 'signh in zip', zipc)
+    print(len(fh), 'fh in zip', zipc)
+    print(len(nopark), 'nopark in zip', zipc)
+    print(len(stop), 'stop in zip', zipc)
+    print(len(sw), 'sidewalks in zip', zipc)
     print(len(meters), 'meters in zip', zipc)
+    print(len(fac), 'facilities in zip', zipc)
     
     out=dict(
         meters=meters, 
@@ -74,7 +75,8 @@ def get_icons(zipc):
         nopark = stop+nopark,
         sidewalks= sw,
         m_streets = mst,
-        ramps=rmp)
+        ramps=rmp,
+        facilities = fac)
 
     return jsonify(out)
 

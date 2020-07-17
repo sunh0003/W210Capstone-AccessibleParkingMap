@@ -5,6 +5,7 @@ import {
   withGoogleMap,
   GoogleMap,
   Polyline,
+  Polygon,
   Marker
 } from "react-google-maps";
 import key from './key.js';
@@ -27,7 +28,7 @@ import hydrant from "./icons/icons8-fire-hydrant-50.png";
 import nopark from "./icons/icons8-no-parking-48.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
-import ramp from "./icons/icons8-triangle-24.png";
+import ramp from "./icons/icons8-filled-circle-16.png";
 import logo from "./icons/logo.png";
 import Autocomplete from 'react-google-autocomplete';
 
@@ -46,12 +47,8 @@ class TheSite extends React.Component {
         this.state = {
             key: {key:key},
             selected: 'map', //initial tab selection
-            center:  {
-                //default
-                    lat:39.7673134 ,
-                    lng:-104.9770917
-                },
-            'zip': 80205,
+            center:  {"lat": 39.735360298000046, "lng": -104.98630657599995},
+            'zip': 80264,
             icons: {'wheelchairs':[], 
                 'meters':[], 
                 'lamps': [], 
@@ -59,7 +56,8 @@ class TheSite extends React.Component {
                 'nopark': [],
                 'sidewalks': [],
                 'm_streets':[],
-                'ramps':[]},
+                'ramps':[],
+                'facilities':[]},
             text: 'We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.'
             };
         this.get_icons();
@@ -168,12 +166,23 @@ class TheSite extends React.Component {
                     onPlaceSelected={this.onPlaceSelected}
                     types={[]}
                     componentRestrictions={{country: "usa"}}
-                    //bounds={bounds} #this throws error i'm not sure how to solve
                     position={this.state.center}
                 />
                 <Marker
                     position={this.state.center}
                 />
+                {this.state.icons.facilities.map((points) => 
+                    <Polygon
+                    paths={points}
+                    options={{
+                        strokeColor: "#F1C40F",
+                        strokeOpacity: 0.75,
+                        strokeWeight: 2,
+                        fillColor: "#F1C40F",
+                        fillOpacity: 0.25
+                    }}
+                    />
+                )}
                 {this.state.icons.sidewalks.map((points) => 
                     <Polyline
                     path={points}
