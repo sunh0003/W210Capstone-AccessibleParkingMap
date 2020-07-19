@@ -11,7 +11,7 @@ import {
 import key from './key.js';
 import { Icon } from '@iconify/react';
 import chartLineVariant from '@iconify/icons-mdi/chart-line-variant';
-import {Paragraph3} from 'baseui/typography';
+import {Paragraph3, Paragraph1} from 'baseui/typography';
 import {
   HeaderNavigation,
   ALIGN,
@@ -30,10 +30,11 @@ import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
 import ramp from "./icons/icons8-filled-circle-16.png";
 import logo from "./icons/logo.png";
+import lot from "./icons/icons8-square-40.png"
 import Autocomplete from 'react-google-autocomplete';
 
-//const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
-const PATH='http://localhost:5000/';
+const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
+//const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
 const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
@@ -46,7 +47,7 @@ class TheSite extends React.Component {
         super(props);
         this.state = {
             key: {key:key},
-            selected: 'map', //initial tab selection
+            selected: 'guide', //initial tab selection
             center:  {"lat": 39.735360298000046, "lng": -104.98630657599995},
             'zip': 80264,
             icons: {'wheelchairs':[], 
@@ -58,7 +59,7 @@ class TheSite extends React.Component {
                 'm_streets':[],
                 'ramps':[],
                 'facilities':[]},
-            text: 'We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.'
+            text: 'Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.'
             };
         this.get_icons();
     }
@@ -145,6 +146,11 @@ class TheSite extends React.Component {
     }
     
     render() {
+        var lineSymbol = {
+            path: "M 0,-1 0,1",
+            strokeOpacity: 0.6,
+            scale: 4
+        };
         const InternalMap = props => (
             <div>
             
@@ -175,10 +181,10 @@ class TheSite extends React.Component {
                     <Polygon
                     paths={points}
                     options={{
-                        strokeColor: "#F1C40F",
+                        strokeColor: "#9B59B6",
                         strokeOpacity: 0.75,
                         strokeWeight: 2,
-                        fillColor: "#F1C40F",
+                        fillColor: "#9B59B6",
                         fillOpacity: 0.25
                     }}
                     />
@@ -188,8 +194,14 @@ class TheSite extends React.Component {
                     path={points}
                     options={{
                         strokeColor: "#3498DB",
-                        strokeOpacity: 0.75,
-                        strokeWeight: 2
+                        strokeWeight: 0,
+                        icons: [
+                            {
+                                icon: lineSymbol,
+                                offset: "0",
+                                repeat: "20px"
+                            }
+                            ]
                     }}
                     />
                 )}
@@ -198,11 +210,18 @@ class TheSite extends React.Component {
                     path={points}
                     options={{
                         strokeColor: "#2ECC71",
-                        strokeOpacity: 0.75,
-                        strokeWeight: 2
+                        strokeWeight: 0,
+                        icons: [
+                            {
+                                icon: lineSymbol,
+                                offset: "0",
+                                repeat: "20px"
+                            }
+                            ]
                     }}
                     />
                 )}
+
                 {this.state.icons.hydrants.map(coords =>
                     <Marker
                     position={{ lat: coords[0], lng: coords[1] }}
@@ -291,7 +310,7 @@ class TheSite extends React.Component {
                 {this.state.selected == 'guide' &&
                     
                     <div style={{padding: '12px'}}>
-                        <Paragraph3>We scanned Google Street View images with our YOLO object detection model and augmented the results with Denver Open Data to map accessible parking and mobility obstacles.</Paragraph3>
+                        <Paragraph3>Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.</Paragraph3>
                         <ListItem
                             endEnhancer={() => (
                                 <ListItemLabel><img src={signh}/></ListItemLabel>
@@ -309,10 +328,18 @@ class TheSite extends React.Component {
                         </ListItem>
                         <ListItem
                             endEnhancer={() => (
+                                <ListItemLabel><img src={lot}/></ListItemLabel>
+                            )}
+                            >
+                            <ListItemLabel>Parking Lot - OpenData</ListItemLabel>
+                            
+                        </ListItem>
+                        <ListItem
+                            endEnhancer={() => (
                                 <ListItemLabel><img src={nopark}/></ListItemLabel>
                             )}
                             >
-                            <ListItemLabel>No Parking - Model</ListItemLabel>
+                            <ListItemLabel>No Parking - Model (Confidence > 0.5)</ListItemLabel>
                         </ListItem>
                         <ListItem
                             endEnhancer={() => (
@@ -350,7 +377,7 @@ class TheSite extends React.Component {
                                 <ListItemLabel><img src={hydrant}/></ListItemLabel>
                             )}
                             >
-                            <ListItemLabel>Fire Hydrant - Model</ListItemLabel>
+                            <ListItemLabel>Fire Hydrant - Model (Confidence > 0.5)</ListItemLabel>
                         </ListItem>
 
                         <ListItem
@@ -358,7 +385,7 @@ class TheSite extends React.Component {
                                 <ListItemLabel><img src={lamp}/></ListItemLabel>
                             )}
                             >
-                            <ListItemLabel>Lamp - Model</ListItemLabel>
+                            <ListItemLabel>Lamp - Model (Confidence > 0.5)</ListItemLabel>
                         </ListItem>
                     </div>
                 }
