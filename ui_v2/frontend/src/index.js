@@ -37,9 +37,8 @@ const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
 //const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
-const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
-//this doesn't seem to actually bar results from the autocomplete but it might prioritize
-//had to restrict manually with this.in_bounds()
+const bounds = [{'lat':39.625055, 'lng':-105.1083229},{'lat':39.8926559,'lng':-104.6403155}];
+//const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -49,7 +48,7 @@ class TheSite extends React.Component {
             key: {key:key},
             selected: 'guide', //initial tab selection
             center:  {"lat": 39.735360298000046, "lng": -104.98630657599995},
-            'zip': 80264,
+            zip: 80264,
             icons: {'wheelchairs':[], 
                 'meters':[], 
                 'lamps': [], 
@@ -87,8 +86,14 @@ class TheSite extends React.Component {
                 });
                 console.log('old zip ' + this.state.zip);
                 var old_zip = this.state.zip.valueOf();
-                console.log('old zip');
-                this.get_zip();
+                for (var i = 0; i < place.address_components.length; i++) {
+                    for (var j = 0; j < place.address_components[i].types.length; j++) {
+                        if (place.address_components[i].types[j] == "postal_code") {
+                            console.log(place.address_components[i].long_name);
+                            this.setState({zip: place.address_components[i].long_name});
+                        }
+                    }
+                }
                 console.log('new zip ' + this.state.zip);
                 if (old_zip != this.state.zip){
                     this.get_icons();
@@ -298,7 +303,7 @@ class TheSite extends React.Component {
                     </StyledNavigationList>
                     <StyledNavigationList $align={ALIGN.right}>
                         <StyledNavigationItem>
-                            <StyledLink href='#'>
+                            <StyledLink href='http://accessipark.com/'>
                                 About This Project
                             </StyledLink>
                         </StyledNavigationItem>
@@ -311,82 +316,85 @@ class TheSite extends React.Component {
                     
                     <div style={{padding: '12px'}}>
                         <Paragraph3>Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.</Paragraph3>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={signh}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Accessible Parking - Model</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={park}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Parking Meter - OpenData</ListItemLabel>
-                            
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={lot}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Parking Lot - OpenData</ListItemLabel>
-                            
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={nopark}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>No Parking - Model (Confidence > 0.5)</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel>
-                                <Icon icon={chartLineVariant} 
-                                    color= "#3498DB"
-                                    width="48"
-                                    height="48"/>
-                                </ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Sidewalk - OpenData</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={ramp}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Sidewalk Ramp - OpenData</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel>
-                                <Icon icon={chartLineVariant} 
-                                    color= "#2ECC71"
-                                    width="48"
-                                    height="48"/>
-                                </ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Construction Free Street (Moratorium) - OpenData</ListItemLabel>
-                        </ListItem>
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={hydrant}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Fire Hydrant - Model (Confidence > 0.5)</ListItemLabel>
-                        </ListItem>
+                        <Paragraph3>Disclaimer: Accuracy is not guaranteed.</Paragraph3>
+                        <div style={{ padding: '12px'}}>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={signh}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Accessible Parking - Model</ListItemLabel>
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={park}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Parking Meter - OpenData</ListItemLabel>
+                                
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={lot}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Parking Lot - OpenData</ListItemLabel>
+                                
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={nopark}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>No Parking - Model</ListItemLabel>
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel>
+                                    <Icon icon={chartLineVariant} 
+                                        color= "#3498DB"
+                                        width="48"
+                                        height="48"/>
+                                    </ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Sidewalk - OpenData</ListItemLabel>
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={ramp}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Sidewalk Ramp - OpenData</ListItemLabel>
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel>
+                                    <Icon icon={chartLineVariant} 
+                                        color= "#2ECC71"
+                                        width="48"
+                                        height="48"/>
+                                    </ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Construction Free Street (Moratorium) - OpenData</ListItemLabel>
+                            </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={hydrant}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Fire Hydrant - Model</ListItemLabel>
+                            </ListItem>
 
-                        <ListItem
-                            endEnhancer={() => (
-                                <ListItemLabel><img src={lamp}/></ListItemLabel>
-                            )}
-                            >
-                            <ListItemLabel>Lamp - Model (Confidence > 0.5)</ListItemLabel>
-                        </ListItem>
+                            <ListItem
+                                endEnhancer={() => (
+                                    <ListItemLabel><img src={lamp}/></ListItemLabel>
+                                )}
+                                >
+                                <ListItemLabel>Lamp - Model</ListItemLabel>
+                            </ListItem>
+                        </div>
                     </div>
                 }
                 {this.state.selected == 'map' &&

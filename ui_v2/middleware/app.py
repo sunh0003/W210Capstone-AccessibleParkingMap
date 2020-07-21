@@ -5,13 +5,26 @@ import requests
 import os
 from flask_cors import CORS
 import json
-from uszipcode import SearchEngine, SimpleZipcode, Zipcode
-search = SearchEngine()
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
 
-PATH = '20200718finalcsv'
+PATH = 'google_full'
+
+#wide coverage to fill in for 80205
+extra_objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
+
+lookup = {
+    80294: [80294, 80202, 80205],
+    80265: [80202, 80265, 80295, 80294],
+    80299: [80299, 80202, 80293, 80265, 80290],
+    80293: [80293, 80202, 80299, 80290],
+    80290: [80290, 80202, 80264, 80203],
+    80264: [80264, 80290, 80202, 80203],
+    80203: [80203, 80264],
+    80257: [80257, 80205, 80202]
+}
 
 with open('sidewalks.json', 'rt') as f:
     sidewalks = json.loads(f.read())
@@ -37,46 +50,42 @@ def zip_df(df):
 print('ready!')
 
 def get_zip_objects(zipc):
-    df = pd.read_csv(f'{PATH}/{zipc}.csv')
-    print(df.shape)
-    classes = []
-    for i in range(6):
-        gen = df.loc[df['class']==i,].groupby(['lat', 'long']).apply(len).index.tolist()
-        classes.append([(lat,lng) for lat,lng in gen])
+    classes = defaultdict(list)
+    for z in lookup.get(int(zipc), [int(zipc)]):
+        df = pd.read_csv(f'{PATH}/{z}.csv')
+        for i in range(6):
+            if zipc in ['80205', '80257']:
+                gen = extra_objects.loc[extra_objects.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
+            else:
+                gen = df.loc[df['class']==i,].groupby(['new_lat', 'new_long']).apply(len).index.tolist()
+            classes[i] += [(lat,lng) for lat,lng in gen]
     return classes
 
-@app.route("/api/get_zip", methods=['POST'])
-def get_zip():
-    ct = request.json['center']
-    result = search.by_coordinates(ct['lat'], ct['lng'], radius=3)
-    return jsonify(result[0].zipcode)
-
+def get_zip_json(zipc):
+    classes = defaultdict(list)
+    for z in lookup.get(int(zipc), [int(zipc)]):
+        classes['sw'] += sidewalks.get(str(z), [])
+        classes['mst'] += m_streets.get(str(z), [])
+        classes['rmp'] += ramps.get(str(z), [])
+        classes['fac'] += facilities.get(str(z), [])
+    return classes
+    
 @app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
 def get_icons(zipc):
-    lamp,signh,fh,nopark,stop,meters = get_zip_objects(zipc)
-    sw = sidewalks.get(str(zipc), [])
-    mst = m_streets.get(str(zipc), [])
-    rmp = ramps.get(str(zipc), [])
-    fac = facilities.get(str(zipc), [])
-    print(len(lamp), 'lamps in zip', zipc)
-    print(len(signh), 'signh in zip', zipc)
-    print(len(fh), 'fh in zip', zipc)
-    print(len(nopark), 'nopark in zip', zipc)
-    print(len(stop), 'stop in zip', zipc)
-    print(len(sw), 'sidewalks in zip', zipc)
-    print(len(meters), 'meters in zip', zipc)
-    print(len(fac), 'facilities in zip', zipc)
+    #lamp,signh,fh,nopark,stop,meters
+    objs = get_zip_objects(zipc)
+    pub = get_zip_json(zipc)
     
     out=dict(
-        meters=meters, 
-        hydrants=fh, 
-        wheelchairs=signh, 
-        lamps=lamp,
-        nopark = stop+nopark,
-        sidewalks= sw,
-        m_streets = mst,
-        ramps=rmp,
-        facilities = fac)
+        meters=objs[5], 
+        hydrants=objs[2], 
+        wheelchairs=objs[1], 
+        lamps=objs[0],
+        nopark = objs[3]+objs[4],
+        sidewalks= pub['sw'],
+        m_streets = pub['mst'],
+        ramps = pub['rmp'],
+        facilities = pub['fac'])
 
     return jsonify(out)
 
