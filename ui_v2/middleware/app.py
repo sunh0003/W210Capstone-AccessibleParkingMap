@@ -56,7 +56,7 @@ def get_zip_objects(zipc):
         df = pd.read_csv(f'{PATH}/{z}.csv')
         for i in range(6):
             gen = df.loc[df['class']==i,].groupby(['new_lat', 'new_long']).apply(len).index.tolist()
-            if zipc in ['80205', '80257']:
+            if zipc in ['80205', '80257', '80202']:
                 gen += extra_objects.loc[extra_objects.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
             classes[i] += [(lat,lng) for lat,lng in gen]
     return classes
