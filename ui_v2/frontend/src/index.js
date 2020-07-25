@@ -96,6 +96,8 @@ class TheSite extends React.Component {
     }
 
     onPlaceSelected = ( place ) => {
+
+        this.setState({text: 'Updating center...'});
         if (place.geometry){
             console.log(place);
             const latValue = place.geometry.location.lat(),
@@ -113,7 +115,6 @@ class TheSite extends React.Component {
     }
 
     getZip = (place, lat, lng) => {
-        this.setState({text: 'Updating center...'});
         var old_zip = this.state.zip.valueOf();
         for (var i = 0; i < place.address_components.length; i++) {
             for (var j = 0; j < place.address_components[i].types.length; j++) {
@@ -174,6 +175,8 @@ class TheSite extends React.Component {
 
 
     mapClicked(event) {
+
+        this.setState({text: 'Updating center...'});
         console.log(event);
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
