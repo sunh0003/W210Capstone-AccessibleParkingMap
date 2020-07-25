@@ -9,6 +9,7 @@ RUN npm install react-scripts@3.4.1 -g --silent
 RUN npm install --save react-google-maps 
 RUN npm install url-loader
 RUN npm install --save react-google-autocomplete
+RUN npm install --save react-geocode
 COPY . ./
 RUN npm run build
 

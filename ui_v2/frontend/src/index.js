@@ -25,20 +25,26 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
 import signh from "./icons/icons8-assistive-technology-48.png";
 import hydrant from "./icons/icons8-fire-hydrant-50.png";
-import nopark from "./icons/icons8-no-parking-48.png";
+import nopark from "./icons/icons8-no-parking-30.png";
 import lamp from "./icons/icons8-street-lamp-50.png";
 import park from "./icons/icons8-parking-30.png";
 import ramp from "./icons/icons8-filled-circle-16.png";
 import logo from "./icons/logo.png";
 import lot from "./icons/icons8-square-40.png"
 import Autocomplete from 'react-google-autocomplete';
+import Geocode from "react-geocode";
 
-const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
+const PATH='http://ec2-54-183-8-20.us-west-1.compute.amazonaws.com:5000/';
 //const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
 const bounds = [{'lat':39.625055, 'lng':-105.1083229},{'lat':39.8926559,'lng':-104.6403155}];
 //const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
+
+Geocode.setApiKey(key);
+// Enable or disable logs. Its optional.
+Geocode.enableDebug();
+
 
 class TheSite extends React.Component {
     //declare intial state vars
@@ -58,8 +64,11 @@ class TheSite extends React.Component {
                 'm_streets':[],
                 'ramps':[],
                 'facilities':[]},
-            text: 'Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.'
+            text: 'Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.',
+            secondary: "Search anywhere in the Denver area to populate that section of the map, or pan and click to re-center!",
+            third: "(Non-locals - try searching 'River North Brewery - Blake Street Taproom' or 'Goed Zuur'.)"
             };
+        this.get_lookup();
         this.get_icons();
     }
 
@@ -72,6 +81,20 @@ class TheSite extends React.Component {
         return response;
     }
 
+    get_icons = () => {
+        fetch(PATH + "api/get_icons/" + this.state.zip)
+            .then(this.handleErrors)
+            .then(response => response.json())
+            .then(data => this.setState({'icons':data}));
+    }
+
+    get_lookup = () => {
+        fetch(PATH + "api/get_lookup")
+            .then(this.handleErrors)
+            .then(response => response.json())
+            .then(data => this.setState({'lookup':data}));
+    }
+
     onPlaceSelected = ( place ) => {
         if (place.geometry){
             console.log(place);
@@ -81,31 +104,50 @@ class TheSite extends React.Component {
             const center = {'lat':latValue, 'lng': lngValue};
             if (this.in_bounds(center)){
                 console.log('in bounds');
-                this.setState({center: center,
-                    text: 'Viewing features near '+place.formatted_address+'.'
-                });
-                console.log('old zip ' + this.state.zip);
-                var old_zip = this.state.zip.valueOf();
-                for (var i = 0; i < place.address_components.length; i++) {
-                    for (var j = 0; j < place.address_components[i].types.length; j++) {
-                        if (place.address_components[i].types[j] == "postal_code") {
-                            console.log(place.address_components[i].long_name);
-                            this.setState({zip: place.address_components[i].long_name});
-                        }
-                    }
-                }
-                console.log('new zip ' + this.state.zip);
-                if (old_zip != this.state.zip){
-                    this.get_icons();
-                } else {
-                    console.log('same zip');
-                    console.log(latValue, lngValue);
-                }
+                this.getZip(place, latValue, lngValue);
             }else{
                 this.setState({'text':'Location '+place.formatted_address+' is out of bounds.'});
             }
             
         }
+    }
+
+    getZip = (place, lat, lng) => {
+        var old_zip = this.state.zip.valueOf();
+        for (var i = 0; i < place.address_components.length; i++) {
+            for (var j = 0; j < place.address_components[i].types.length; j++) {
+                if (place.address_components[i].types[j] == "postal_code") {
+                    console.log(place.address_components[i].long_name);
+                    var new_zip = place.address_components[i].long_name;
+                }
+            }
+        }
+        if (old_zip != new_zip){
+            var lkup = this.state.lookup[old_zip];
+            if (lkup){
+                if (!lkup.includes(parseInt(new_zip))){
+                    console.log('old ->new');
+                    console.log(old_zip);
+                    console.log(new_zip);
+                    this.update(new_zip, lat, lng, place.formatted_address);
+                }else{
+                    console.log('same data');
+                    this.setState({zip: new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+place.formatted_address+'.'});
+                }
+            }else{
+                console.log('old ->new');
+                console.log(old_zip);
+                console.log(new_zip);
+                this.update(new_zip, lat, lng, place.formatted_address);
+            }
+        }else{
+            this.setState({zip: new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+place.formatted_address+'.'});
+        }
+    }
+
+    update = (new_zip, lat, lng, a) => {
+        this.setState({zip:new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+a+'.'});
+        this.get_icons();
     }
 
     in_bounds = (center) => {
@@ -118,28 +160,7 @@ class TheSite extends React.Component {
         }else{
             return(false);
         }
-    }
-
-    get_zip = () => {
-        //function to geocode consistently
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ center: this.state.center})
-        };
-        fetch(PATH + "api/get_zip", requestOptions)
-            .then(this.handleErrors)
-            .then(response => response.json())
-            .then(data => this.setState({'zip':data}));
-    }
-
-    get_icons = () => {
-        console.log(this.state.center);
-        console.log(this.state.zip);
-        fetch(PATH + "api/get_icons/" + this.state.zip)
-            .then(this.handleErrors)
-            .then(response => response.json())
-            .then(data => this.setState({'icons':data}));
+        
     }
 
     onMap = () => {
@@ -149,18 +170,43 @@ class TheSite extends React.Component {
     onGuide = () => {
         this.setState({'selected': 'guide'});
     }
-    
+
+
+    mapClicked(event) {
+        console.log(event);
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+
+        // Get address from latitude & longitude.
+        Geocode.fromLatLng(lat, lng).then(
+            response => {
+                this.getZip(response.results[0], lat, lng);
+            },
+            error => {
+                console.error(error);
+            }
+            );
+    }
+
     render() {
         var lineSymbol = {
             path: "M 0,-1 0,1",
             strokeOpacity: 0.6,
             scale: 4
         };
+
+        const OPTIONS = {
+            minZoom: 17,
+            maxZoom: 21,
+            }
+
         const InternalMap = props => (
             <div>
             
             <GoogleMap defaultZoom={19} 
+                options={OPTIONS}
                 defaultCenter={this.state.center}
+                onClick={this.mapClicked.bind(this)}
                 >
                 <Autocomplete
                     style={{
@@ -304,7 +350,7 @@ class TheSite extends React.Component {
                     <StyledNavigationList $align={ALIGN.right}>
                         <StyledNavigationItem>
                             <StyledLink href='http://accessipark.com/'>
-                                About This Project
+                                Homepage
                             </StyledLink>
                         </StyledNavigationItem>
                     </StyledNavigationList>
@@ -315,7 +361,7 @@ class TheSite extends React.Component {
                 {this.state.selected == 'guide' &&
                     
                     <div style={{padding: '12px'}}>
-                        <Paragraph3>Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.</Paragraph3>
+                        <Paragraph3><strong>Charting Accessibility Obstacles and Accessible Parking Opportunities with Computer Vision, Google Street View and Denver OpenData.</strong></Paragraph3>
                         <Paragraph3>Disclaimer: Accuracy is not guaranteed.</Paragraph3>
                         <div style={{ padding: '12px'}}>
                             <ListItem
@@ -399,7 +445,9 @@ class TheSite extends React.Component {
                 }
                 {this.state.selected == 'map' &&
                     <div>
-                    <Paragraph3>{this.state.text}</Paragraph3>
+                    <Paragraph3><strong>{this.state.text}</strong></Paragraph3>
+                    <Paragraph3>{this.state.secondary}</Paragraph3>
+                    <Paragraph3><i>{this.state.third}</i></Paragraph3>
                     <MapHoc
                         googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + key + "&v=3.exp&libraries=geometry,drawing,places"}
                         loadingElement={<div style={{ height: `100%` }} />}

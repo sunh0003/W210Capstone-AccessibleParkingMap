@@ -16,6 +16,7 @@ RUN npm install
 RUN npm install --save react-google-maps 
 RUN npm install url-loader
 RUN npm install --save react-google-autocomplete
+RUN npm install --save react-geocode
 # add app
 COPY . ./
 

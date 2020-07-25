@@ -10,7 +10,7 @@ from collections import defaultdict
 app = Flask(__name__)
 CORS(app)
 
-PATH = 'google_full'
+PATH = 'google_thresh'
 
 #wide coverage to fill in for 80205
 extra_objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
@@ -21,10 +21,13 @@ lookup = {
     80299: [80299, 80202, 80293, 80265, 80290],
     80293: [80293, 80202, 80299, 80290],
     80290: [80290, 80202, 80264, 80203],
-    80264: [80264, 80290, 80202, 80203],
+    80264: [80264, 80290, 80202, 80203, 80205, 80218],
     80203: [80203, 80264],
     80257: [80257, 80205, 80202],
-    80202: [80202, 80264, 80290, 80203]
+    80202: [80202, 80264, 80290, 80203],
+    80218: [80218, 80203, 80205, 80264],
+    80203: [80203, 80218, 80205],
+    80205: [80205, 80203, 80264]
 }
 
 with open('sidewalks.json', 'rt') as f:
@@ -56,7 +59,7 @@ def get_zip_objects(zipc):
         df = pd.read_csv(f'{PATH}/{z}.csv')
         for i in range(6):
             gen = df.loc[df['class']==i,].groupby(['new_lat', 'new_long']).apply(len).index.tolist()
-            if zipc in ['80205', '80257', '80202']:
+            if zipc in ['80205', '80257', '80202', '80264']:
                 gen += extra_objects.loc[extra_objects.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
             classes[i] += [(lat,lng) for lat,lng in gen]
     return classes
@@ -70,6 +73,11 @@ def get_zip_json(zipc):
         classes['fac'] += facilities.get(str(z), [])
     return classes
     
+@app.route("/api/get_lookup")
+def get_lookup():
+    '''this way we only have to maintain in 1 place'''
+    return jsonify(lookup)
+
 @app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
 def get_icons(zipc):
     #lamp,signh,fh,nopark,stop,meters
