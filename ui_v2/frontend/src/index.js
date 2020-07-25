@@ -113,6 +113,7 @@ class TheSite extends React.Component {
     }
 
     getZip = (place, lat, lng) => {
+        this.setState({text: 'Updating center...'});
         var old_zip = this.state.zip.valueOf();
         for (var i = 0; i < place.address_components.length; i++) {
             for (var j = 0; j < place.address_components[i].types.length; j++) {
