@@ -33,8 +33,8 @@ import logo from "./icons/logo.png";
 import lot from "./icons/icons8-square-40.png"
 import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
-
-const PATH='http://ec2-54-183-8-20.us-west-1.compute.amazonaws.com:5000/';
+const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
+//const PATH='http://ec2-54-183-8-20.us-west-1.compute.amazonaws.com:5000/';
 //const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
