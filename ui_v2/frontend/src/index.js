@@ -32,18 +32,14 @@ import ramp from "./icons/icons8-filled-circle-16.png";
 import logo from "./icons/logo.png";
 import lot from "./icons/icons8-square-40.png"
 import Autocomplete from 'react-google-autocomplete';
-import Geocode from "react-geocode";
 
-const PATH='http://ec2-54-183-8-20.us-west-1.compute.amazonaws.com:5000/';
+
+const PATH='http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:5000/';
 //const PATH='http://localhost:5000/';
 const engine = new Styletron();
 
 const bounds = [{'lat':39.625055, 'lng':-105.1083229},{'lat':39.8926559,'lng':-104.6403155}];
 //const bounds = [{'lat':39.71681, 'lng':-105.0606},{'lat':39.79398,'lng':-104.9685}];
-
-Geocode.setApiKey(key);
-// Enable or disable logs. Its optional.
-Geocode.enableDebug();
 
 
 class TheSite extends React.Component {
@@ -53,7 +49,7 @@ class TheSite extends React.Component {
         this.state = {
             key: {key:key},
             selected: 'guide', //initial tab selection
-            center:  {"lat": 39.735360298000046, "lng": -104.98630657599995},
+            center:  {"lat": 39.7289820, "lng": -104.984931},
             zip: 80264,
             icons: {'wheelchairs':[], 
                 'meters':[], 
@@ -68,7 +64,7 @@ class TheSite extends React.Component {
             secondary: "Search anywhere in the Denver area to populate that section of the map, or pan and click to re-center!",
             third: "(Non-locals - try searching 'River North Brewery - Blake Street Taproom' or 'Goed Zuur'.)"
             };
-        this.get_lookup();
+        //this.get_lookup();
         this.get_icons();
     }
 
@@ -82,23 +78,24 @@ class TheSite extends React.Component {
     }
 
     get_icons = () => {
-        fetch(PATH + "api/get_icons/" + this.state.zip)
+        fetch(PATH + "api/get_icons/" + this.state.zip, {
+                method: "post",
+                body:
+                    JSON.stringify({
+                        center: this.state.center
+                    }),
+                headers: {"Content-Type": "application/json"}
+            })
             .then(this.handleErrors)
             .then(response => response.json())
             .then(data => this.setState({'icons':data}));
     }
 
-    get_lookup = () => {
-        fetch(PATH + "api/get_lookup")
-            .then(this.handleErrors)
-            .then(response => response.json())
-            .then(data => this.setState({'lookup':data}));
-    }
-
+    
     onPlaceSelected = ( place ) => {
 
-        this.setState({text: 'Updating center...'});
         if (place.geometry){
+            this.setState({text: 'Updating center...'});
             console.log(place);
             const latValue = place.geometry.location.lat(),
             lngValue = place.geometry.location.lng();
@@ -106,7 +103,7 @@ class TheSite extends React.Component {
             const center = {'lat':latValue, 'lng': lngValue};
             if (this.in_bounds(center)){
                 console.log('in bounds');
-                this.getZip(place, latValue, lngValue);
+                this.update(center, place.formatted_address);
             }else{
                 this.setState({'text':'Location '+place.formatted_address+' is out of bounds.'});
             }
@@ -114,41 +111,9 @@ class TheSite extends React.Component {
         }
     }
 
-    getZip = (place, lat, lng) => {
-        var old_zip = this.state.zip.valueOf();
-        for (var i = 0; i < place.address_components.length; i++) {
-            for (var j = 0; j < place.address_components[i].types.length; j++) {
-                if (place.address_components[i].types[j] == "postal_code") {
-                    console.log(place.address_components[i].long_name);
-                    var new_zip = place.address_components[i].long_name;
-                }
-            }
-        }
-        if (old_zip != new_zip){
-            var lkup = this.state.lookup[old_zip];
-            if (lkup){
-                if (!lkup.includes(parseInt(new_zip))){
-                    console.log('old ->new');
-                    console.log(old_zip);
-                    console.log(new_zip);
-                    this.update(new_zip, lat, lng, place.formatted_address);
-                }else{
-                    console.log('same data');
-                    this.setState({zip: new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+place.formatted_address+'.'});
-                }
-            }else{
-                console.log('old ->new');
-                console.log(old_zip);
-                console.log(new_zip);
-                this.update(new_zip, lat, lng, place.formatted_address);
-            }
-        }else{
-            this.setState({zip: new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+place.formatted_address+'.'});
-        }
-    }
 
-    update = (new_zip, lat, lng, a) => {
-        this.setState({zip:new_zip, center: {'lat': lat, 'lng': lng}, text: 'Viewing features near '+a+'.'});
+    update = (center, a) => {
+        this.setState({center: center, text: 'Viewing features near '+a+'.'});
         this.get_icons();
     }
 
@@ -180,16 +145,7 @@ class TheSite extends React.Component {
         console.log(event);
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
-
-        // Get address from latitude & longitude.
-        Geocode.fromLatLng(lat, lng).then(
-            response => {
-                this.getZip(response.results[0], lat, lng);
-            },
-            error => {
-                console.error(error);
-            }
-            );
+        this.update({'lat':lat, 'lng':lng}, 'mouse location')
     }
 
     render() {
@@ -304,7 +260,7 @@ class TheSite extends React.Component {
                 }
                 {this.state.icons.ramps.map(coords =>
                     <Marker
-                    position={coords}
+                    position={{ lat: coords[0], lng: coords[1] }}
                     icon={ramp}
                     />)
                 }
@@ -388,7 +344,7 @@ class TheSite extends React.Component {
                                     <ListItemLabel><img src={lot}/></ListItemLabel>
                                 )}
                                 >
-                                <ListItemLabel>Parking Lot - OpenData</ListItemLabel>
+                                <ListItemLabel>Parking Facilities - OpenData</ListItemLabel>
                                 
                             </ListItem>
                             <ListItem
