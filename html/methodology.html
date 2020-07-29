@@ -52,22 +52,22 @@
                 	<hr>
                 	<h2> <b> <P>PROBLEM STATEMENT</P></b> </h2>
                 	<hr>
-                	<h3>h2> <strong> Problem Statement</strong> </h2>
+                	<h3> <strong> Problem Statement</strong> </h2>
                     <h3><strong> Problem 1: City streets are not always accessible. </strong> </h3>
-                    <p> According to the 2010 US Census, there are 30.6 million Americans with physical disabilities. Nearly half use an assistive aid, such as a wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many streets, sidewalks, and businesses in the US remain inaccessible. 
-                        Parking and sidewalk accessibility fundamentally affects where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible. 
-                        The National Council of Disability and other organizations do not have comprehensive information on the degree to which sidewalks are accessible. Where partial information relevant to accessibility exists, there are few user-friendly solutions to deliver it to those who need it most. 
+                    <p> According to the 2010 US Census, there are 30.6 million Americans with physical disabilities. Nearly half use an assistive aid, such as a wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many streets, sidewalks, and businesses in the US remain inaccessible.
+                        Parking and sidewalk accessibility fundamentally affects where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible.
+                        The National Council of Disability and other organizations do not have comprehensive information on the degree to which sidewalks are accessible. Where partial information relevant to accessibility exists, there are few user-friendly solutions to deliver it to those who need it most.
                         Methods available to organizations to assess accessibility, often in-person street audits or citizen call-in reports, are inconsistent and costly. <br/>
                     <h3> <strong> Problem 2: Accessible parking is not easy to find.</strong> </h3>
-                    According to the Accessible Parking Coalition, 69% of people with disabilities have problems finding accessible parking in their communities. 
-                    96% say parking availability is important to leading an independent life. 
-                    70% say their decision to drive or ride is influenced by parking availablity. 
-                    62% say they would be more likely to drive or ride if parking was more available. 
-                    52% have decided not to make a trip because of concerns about finding parking. 
+                    According to the Accessible Parking Coalition, 69% of people with disabilities have problems finding accessible parking in their communities.
+                    96% say parking availability is important to leading an independent life.
+                    70% say their decision to drive or ride is influenced by parking availablity.
+                    62% say they would be more likely to drive or ride if parking was more available.
+                    52% have decided not to make a trip because of concerns about finding parking.
                     <br/>
                 	<hr>
                 	<h2> <strong> Mission and Vision Statement</strong> </h2>
-                    <p>Our mission is to help people identify accessible parking opportunities and avoid accessibility obstacles. 
+                    <p>Our mission is to help people identify accessible parking opportunities and avoid accessibility obstacles.
                     Our vision is for people with mobility challenges to be able to lead fulfilling lives with peace of mind, armed with a plan for where to park and how to continue unobstructed to their destination.</p>
                 	<p> For our prototype, we decided to map Denver, Colorado, for the following reasons: 1) a group member resides there 2) driving and parking is ubiquitous 3) the grid system facilitated our data collection 4) ample supplementary public data was available </p>
                     <p> We hope to inspire other data scientists to implement AccessiPark in their cities!</p>
@@ -75,7 +75,7 @@
                 	<hr>
                 	<h2> <b>GATHERING DATA</b></h2>
                 	<hr>
-                    <p> We used ArcGIS Pro to collect the latitude and longitude locations in an area of Downtown Denver, and we used Google's Static Streetview API to download images facing the street side. In total we trained, tested and validated our model on ~6000 images that the team labelled using LabelImg. For inference, we expanded the area to greater Denver, collecting over 200,000 images (10 GB). 
+                    <p> We used ArcGIS Pro to collect the latitude and longitude locations in an area of Downtown Denver, and we used Google's Static Streetview API to download images facing the street side. In total we trained, tested and validated our model on ~6000 images that the team labelled using LabelImg. For inference, we expanded the area to greater Denver, collecting over 200,000 images (10 GB).
                     </p>
                 	<br />
                     <img src="data.png" alt="objectdetector" style="width:50%;">
@@ -93,14 +93,14 @@
                 	<hr>
                 	<p> We used our trained YOLO model to detect objects on 200,000 images in the Denver area. Where our model found objects, we wrote those out to files that are then used to power the map visualization. </p>
                     <hr>
-                    
+
                 	<img src="sampleinfer.png" alt="sampleinfer" style="width:50%;">
                   	<br />
                     <br>
                 	<hr>
                 	<h2> <b>VISUALIZATION</b></h2>
                     <hr>
-                    <p> The above diagram shows the product architecture. Google Colab was used to conduct model training/testing/validation and model inference.  We implemented additional transformations on the model output and public data through batch processing on our local systems. We leveraged AWS S3 to store labelled images, models, and inference results. Our AWS EC2 hosts our prototype and runs two Docker containers - the first hosts a Flask API and serves oru data, and the second builds and hosts our React front-end with Node and Nginx. </p>
+                    <p> The below diagram shows the product architecture. Google Colab was used to conduct model training/testing/validation and model inference.  We implemented additional transformations on the model output and public data through batch processing on our local systems. We leveraged AWS S3 to store labelled images, models, and inference results. Our AWS EC2 hosts our prototype and runs two Docker containers - the first hosts a Flask API and serves oru data, and the second builds and hosts our React front-end with Node and Nginx. </p>
                 	<br>
                     <img src="architecture.png" alt="sampleinfer" style="width:70%;">
                     <br>
