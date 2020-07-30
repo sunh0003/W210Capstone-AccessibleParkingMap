@@ -1,4 +1,6 @@
 # AccessiPark
+Charting accessibility obstacles and accessible parking opportunities with computer vision, Google Street View, and Denver OpenData.
+
 ## W210 Capstone Project - Summer 2020
 by Rachael Burns, Richard Ryu, Michelle Sun, and Hong Yang
 
@@ -122,4 +124,5 @@ def zip_df(df):
 
 Come check it out at [AccessiPark](http://accessipark.com)
 
+### Accessibility Rating
 
