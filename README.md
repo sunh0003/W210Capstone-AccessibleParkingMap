@@ -47,28 +47,6 @@ We're creating an [accessible parking map](http://ec2-54-183-149-77.us-west-1.co
 
 The bounding boxes from the inference above are saved in a csv format. Above is an example of the csv file in pandas DF. In order to plot this on our AccessiPark map, we've listed the necessary feature engineering below:
 
-```def csv_par9(df, delta):
-    for i in range(len(df)):
-        df.loc[i, 'lat'] = float(df.loc[i, 'imgname'].split('-')[0])
-        df.loc[i, 'long'] = float(df.loc[i, 'imgname'].split('-')[2]) * -1.0
-        df.loc[i, 'angle'] = df.loc[i, 'imgname'].split('-')[3][:-4]
-        result = search.by_coordinates(df.loc[i, 'lat'], df.loc[i, 'long'], radius=3)
-        df.loc[i, 'zipcode'] = result[0].zipcode
-        df.loc[i, 'zipcode2'] = result[1].zipcode
-        if df.loc[i, 'xcenter'] <= 0.333333:
-            df.loc[i, 'detect_loc'] = 'L'
-            df.loc[i, 'new_lat'] = df.loc[i, 'lat'] + (delta * math.cos((math.pi / 180)*(float(df.loc[i, 'angle'])-90)))
-            df.loc[i, 'new_long'] = df.loc[i, 'long'] + (delta * math.sin((math.pi / 180)*(float(df.loc[i, 'angle'])-90)))
-        elif df.loc[i, 'xcenter'] > 0.666666:
-            df.loc[i, 'detect_loc'] = 'R'
-            df.loc[i, 'new_lat'] = df.loc[i, 'lat'] - (delta * math.cos((math.pi / 180)*(float(df.loc[i, 'angle']) -90)))
-            df.loc[i, 'new_long'] = df.loc[i, 'long'] - (delta * math.sin((math.pi / 180)*(float(df.loc[i, 'angle']) -90)))
-        else:
-            df.loc[i, 'detect_loc'] = 'C'
-            df.loc[i, 'new_lat'] = df.loc[i, 'lat']
-            df.loc[i, 'new_long'] = df.loc[i, 'long']
-    return df
-```
 * Transformation
   * Split 'imgname' into 'lat', 'long', 'angle'
 
@@ -110,8 +88,7 @@ def csv_par11(df, delta):
     return df
 ```
 
-* Organize DataFrame by Zipcode
-  * Organize inferences into CSV file by zipcodes
+* Organize inferences into CSV file by zipcodes
 
 ```
 def zip_df(df):
