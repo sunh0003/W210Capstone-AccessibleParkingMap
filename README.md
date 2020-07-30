@@ -5,6 +5,7 @@ by Rachael Burns, Richard Ryu, Michelle Sun, and Hong Yang
 ## Problem Statement
 **Problem 1: City streets are not always accessible.**
 According to the 2010 US Census, there are 30.6 million Americans with physical disabilities. Nearly half use an assistive aid, such as a wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many streets, sidewalks, and businesses in the US remain inaccessible. Parking and sidewalk accessibility fundamentally affects where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible. The National Council of Disability and other organizations do not have comprehensive information on the degree to which sidewalks are accessible. Where partial information relevant to accessibility exists, there are few user-friendly solutions to deliver it to those who need it most. Methods available to organizations to assess accessibility, often in-person street audits or citizen call-in reports, are inconsistent and costly.
+
 **Problem 2: Accessible parking is not easy to find.**
 According to the Accessible Parking Coalition, 69% of people with disabilities have problems finding accessible parking in their communities. 96% say parking availability is important to leading an independent life. 70% say their decision to drive or ride is influenced by parking availablity. 62% say they would be more likely to drive or ride if parking was more available. 52% have decided not to make a trip because of concerns about finding parking.
 
@@ -120,3 +121,5 @@ def zip_df(df):
 <img src="images/icons.png" width="300" height="300" align="middle"/>
 
 Come check it out at [AccessiPark](http://accessipark.com)
+
+
