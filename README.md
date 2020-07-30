@@ -1,9 +1,17 @@
 # AccessiPark
-## W210 Capstone Project
+## W210 Capstone Project - Summer 2020
 by Rachael Burns, Richard Ryu, Michelle Sun, and Hong Yang
 
-## Mission Statement
-Reduce street-level accessibility problems and find accessible parking easily
+## Problem Statement
+**Problem 1: City streets are not always accessible.**
+According to the 2010 US Census, there are 30.6 million Americans with physical disabilities. Nearly half use an assistive aid, such as a wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many streets, sidewalks, and businesses in the US remain inaccessible. Parking and sidewalk accessibility fundamentally affects where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible. The National Council of Disability and other organizations do not have comprehensive information on the degree to which sidewalks are accessible. Where partial information relevant to accessibility exists, there are few user-friendly solutions to deliver it to those who need it most. Methods available to organizations to assess accessibility, often in-person street audits or citizen call-in reports, are inconsistent and costly.
+**Problem 2: Accessible parking is not easy to find.**
+According to the Accessible Parking Coalition, 69% of people with disabilities have problems finding accessible parking in their communities. 96% say parking availability is important to leading an independent life. 70% say their decision to drive or ride is influenced by parking availablity. 62% say they would be more likely to drive or ride if parking was more available. 52% have decided not to make a trip because of concerns about finding parking.
+
+## Mission and Vision Statement
+Our mission is to help people identify accessible parking opportunities and avoid accessibility obstacles. 
+
+Our vision is for people with mobility challenges to be able to lead fulfilling lives with peace of mind, armed with a plan for where to park and how to continue unobstructed to their destination.
 
 ## So what is this?
 We're creating an [accessible parking map](http://ec2-54-183-149-77.us-west-1.compute.amazonaws.com:3001/) that displays handicap signs and obstacles that are detected through our custom trained YOLOv5 model that's inspired by [Roboflow's YOLOv5 notebook](https://blog.roboflow.ai/how-to-train-yolov5-on-a-custom-dataset/)
