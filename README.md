@@ -126,4 +126,4 @@ Come check it out at [AccessiPark](http://accessipark.com)
 
 ### Accessibility Rating
 
-<img src="images/accessibility_rating.png" width="600" align="middle"/>
+<img src="images/accessibility_rating.png" width="800" align="middle"/>
