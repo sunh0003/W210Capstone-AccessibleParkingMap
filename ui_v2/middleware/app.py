@@ -4,69 +4,137 @@ import numpy as np
 import requests
 import os
 from flask_cors import CORS
+import json
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
+PATH = 'google_thresh/'
 
-# urls = ['https://www.denvergov.org/media/gis/DataCatalog/parking_meters/csv/parking_meters.csv']
-# #download data on startup
-# for url in urls:
-#     name = url.split('/')[-1]
-#     if not os.path.exists(name):
-#         response = requests.get(url)
-#         with open(name, 'wt') as f:
-#             f.write(response.text)
+out = pd.DataFrame()
+for f in os.listdir(PATH):
+    out = pd.concat([out, pd.read_csv(PATH+f)])
+out=out[['zipcode', 'new_lat', 'new_long', 'class']]
 
-#load data into memory - todo - does this work at scale?
-#if not, use sqlite or other local db
-meters = pd.read_csv('parking_meter_zip.csv').drop_duplicates()
+objects = pd.read_csv('initial_20200630.csv').drop_duplicates()[['ZIPCODE','LATITUDE','LONGITUDE','CLASS']]
+objects.columns=['zipcode', 'new_lat', 'new_long', 'class']
+out = pd.concat([out, objects])
 
-objects = pd.read_csv('initial_20200630.csv').drop_duplicates()
+with open('sidewalks.json', 'rt') as f:
+    sidewalks = json.loads(f.read())
 
-print('ready!')
+with open('moratorium_streets.json', 'rt') as f:
+    m_streets = json.loads(f.read())
 
-def get_zip(df, zipc):
-    gen = df.loc[df.ZIPCODE == zipc,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
-    return [(lat,lng) for lat,lng in gen]
+path_transform = []
+for k,v in sidewalks.items():
+    for r in v:
+        rec = {'zipcode':k, 
+               'start_lat':r[0]['lat'], 
+               'start_long':r[0]['lng'], 
+               'end_lat': r[-1]['lat'],
+               'end_long': r[-1]['lng'],
+               'class':'sw', 
+               'path':r}
+        path_transform.append(rec)
+for k,v in m_streets.items():
+    for r in v:
+        rec = {'zipcode':k, 
+               'start_lat':r[0]['lat'], 
+               'start_long':r[0]['lng'], 
+               'end_lat': r[-1]['lat'],
+               'end_long': r[-1]['lng'],
+               'class':'mst', 
+               'path':r}
+        path_transform.append(rec)
+paths = pd.DataFrame(path_transform)
 
-def get_zip_objects(df, zipc):
-    print(df.shape)
-    df = df.loc[df.ZIPCODE == zipc,]
-    print(df.shape)
-    classes = []
-    for i in range(5):
-        gen = df.loc[df.CLASS==i,].groupby(['LATITUDE', 'LONGITUDE']).apply(len).index.tolist()
-        classes.append([(lat,lng) for lat,lng in gen])
+with open('curb_ramps.json', 'rt') as f:
+    ramps = json.loads(f.read())
+
+ramps_transform = []
+for k,v in ramps.items():
+    for r in v:
+        rec = {'zipcode':k, 'new_lat':r['lat'], 'new_long':r['lng'], 'class':6}
+        ramps_transform.append(rec)
+
+out = pd.concat([out, pd.DataFrame(ramps_transform)])
+out['path'] = None
+
+with open('facilities.json', 'rt') as f:
+    facilities = json.loads(f.read())
+
+fac_transform = []
+for k,v in facilities.items():
+    for r in v:
+        try:
+            rec = {'zipcode':k, 'new_lat':r[0][0][0]['lat'], 'new_long':r[0][0][0]['lng'], 'class':7, 'path':r}
+        except:
+            rec = {'zipcode':k, 'new_lat':r[0][0]['lat'], 'new_long':r[0][0]['lng'], 'class':7, 'path':r}
+        fac_transform.append(rec)
+out = pd.concat([out, pd.DataFrame(fac_transform)])
+
+def zip_df(df):
+    '''for later'''
+    for i in df["zipcode"].unique():
+        temp_df = df[df["zipcode"] == i]
+        temp_df.to_csv(i + '.csv', encoding = 'utf-8', index = False)
+
+def squared_linear_distance(lat, long, center): 
+    return (lat - center['lat'])**2 + (long - center['lng'])**2
+
+def get_radius_objects(center, k):
+    classes = defaultdict(list)
+    cp = out.copy()
+    cp['dist'] = squared_linear_distance(cp['new_lat'], cp['new_long'], center)
+    slc = cp.sort_values(by='dist', ascending=True)[:k]
+    for i in range(7):
+        print(i)
+        gen = slc.loc[slc['class']==i,].groupby(['new_lat', 'new_long']).apply(len).index.tolist()
+        classes[i] += [(lat,lng) for lat,lng in gen]
+        print(len(classes[i]))
+    classes[7] = [p for p in slc.loc[slc['class']==7,].path.tolist()]
     return classes
 
-def lin_dist(a,b):
-    #TODO - fix this
-    return np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
+def get_radius_paths(center, k):
+    cp = paths.copy()
+    cp['dist_st'] = squared_linear_distance(cp['start_lat'], cp['start_long'], center)
+    cp['dist_end'] = squared_linear_distance(cp['end_lat'], cp['end_long'], center)
+    cp['min_dist'] = cp[['dist_st','dist_end']].min(axis=1)
+    slc = cp.sort_values(by='min_dist', ascending=True)[:k]
+    sw = [p for p in slc.loc[slc['class']=='sw',].path.tolist()]
+    mst = [p for p in slc.loc[slc['class']=='mst',].path.tolist()]
+    return sw, mst
 
-@app.route("/api/get_icons")
-def get_icons():
-    #TODO - get zip from request
-    zipc = 80264
-    zip_meters = get_zip(meters, zipc)
-    print(len(zip_meters), 'meters in zip', zipc)
-    lamp,signh,fh,nopark,stop = get_zip_objects(objects, zipc)
+@app.route("/api/get_lookup")
+def get_lookup():
+    '''this way we only have to maintain in 1 place'''
+    return jsonify(lookup)
 
-    #TODO - get center from request
-    center = (39.739492999999996,-104.982258)
+@app.route("/api/get_icons/<zipc>", methods=['GET', 'POST'])
+def get_icons(zipc):
+    center = request.json['center']
+    #lamp,signh,fh,nopark,stop,meters
+    objs = get_radius_objects(center, 1000)
+    sw,mst = get_radius_paths(center, 1000)
     
-    # m_lens = [(coord, lin_dist(coord, center)) for coord in global_meters]
-    # m_lens = sorted(m_lens, key = lambda x: x[1])[:5]
-    # meters = [m[0] for m in m_lens]
-    #samples for demo purposes
-    
-    out=dict(center=center, 
-        meters=zip_meters, 
-        hydrants=fh, 
-        wheelchairs=signh, 
-        lamps=lamp,
-        nopark = stop+nopark)
+    out=dict(
+        meters = objs[5], 
+        hydrants = objs[2], 
+        wheelchairs = objs[1], 
+        lamps = objs[0],
+        nopark = objs[3]+objs[4],
+        sidewalks= sw,
+        m_streets = mst,
+        ramps = objs[6],
+        facilities = objs[7])
 
     return jsonify(out)
+
+@app.route("/api/get_polygons/<zipc>", methods=['GET', 'POST'])
+def get_polygons(zipc):
+    '''todo - make these 2 routes'''
+    pass
 
 
 if __name__ == '__main__':

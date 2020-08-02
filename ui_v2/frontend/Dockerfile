@@ -11,9 +11,12 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
-RUN npm install @iconify/react@1.1.3 
-#^was having an issue installing that dependency from package.json
-
+# TODO - get all of the following in the package/package-lock.json
+#RUN npm install @iconify/react@1.1.3 
+RUN npm install --save react-google-maps 
+RUN npm install url-loader
+RUN npm install --save react-google-autocomplete
+RUN npm install --save react-geocode
 # add app
 COPY . ./
 
