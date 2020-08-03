@@ -55,18 +55,19 @@
                 	<h3> <strong> Problem Statement</strong> </h2>
                     <h3><strong> Problem 1: City streets are not always accessible. </strong> </h3>
                     <p> According to the 2010 US Census, there are 30.6 million Americans with physical disabilities. Nearly half use an assistive aid, such as a wheelchair (3.6 million) or a cane, crutches, or walker (11.6 million). Many streets, sidewalks, and businesses in the US remain inaccessible.
-                        Parking and sidewalk accessibility fundamentally affects where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible.
+                        Parking and sidewalk accessibility fundamentally affect where and how people live their lives, yet it is challenging for anyone to determine whether a given destination is accessible.
                         The National Council of Disability and other organizations do not have comprehensive information on the degree to which sidewalks are accessible. Where partial information relevant to accessibility exists, there are few user-friendly solutions to deliver it to those who need it most.
                         Methods available to organizations to assess accessibility, often in-person street audits or citizen call-in reports, are inconsistent and costly. <br/>
                     <h3> <strong> Problem 2: Accessible parking is not easy to find.</strong> </h3>
-                    According to the Accessible Parking Coalition, 69% of people with disabilities have problems finding accessible parking in their communities.
-                    96% say parking availability is important to leading an independent life.
-                    70% say their decision to drive or ride is influenced by parking availablity.
-                    62% say they would be more likely to drive or ride if parking was more available.
-                    52% have decided not to make a trip because of concerns about finding parking.
+                    <p>According to the Accessible Parking Coalition</p>
+                    <p>69% of people with disabilities have problems finding accessible parking in their communities</p>
+                    <p>96% say parking availability is important to leading an independent life</p>
+                    <p>70% say their decision to drive or ride is influenced by parking availability</p>
+                    <p>62% say they would be more likely to drive or ride if parking was more available</p>
+                    <p>52% have decided not to make a trip because of concerns about finding parking</p>
                     <br/>
                 	<hr>
-                	<h2> <strong> Mission and Vision Statement</strong> </h2>
+                	<h2> <strong> Vision and Mission Statement</strong> </h2>
                     <p>Sympathizing with the accessibility problem, we came up with a vision statement that finding accessible parking should not be a challenge. Our mission statement to chart accessibility obstacles and accessible parking opportunities with computer vision, Google Street View and Denver OpenData directly supports our team's vision.</p>
                 	<p> For our pilot, we decided to map Denver, Colorado, for the following reasons:</p>
                     <p> 1) Denver is home to one of our team member</p>
@@ -101,9 +102,14 @@
                   	<br />
                     <br>
                 	<hr>
-                	<h2> <b>VISUALIZATION</b></h2>
+                	<h2> <b>System Architecture</b></h2>
                     <hr>
-                    <p> The below diagram shows the product architecture. Google Colab was used to conduct model training/testing/validation and model inference.  We implemented additional transformations on the model output and public data through batch processing on our local systems. We leveraged AWS S3 to store labelled images, models, and inference results. Our AWS EC2 hosts our prototype and runs two Docker containers - the first hosts a Flask API and serves oru data, and the second builds and hosts our React front-end with Node and Nginx. </p>
+                    <p>Google Colab - YOLOv5 Training and Inference</p>
+                    <p>AWS S3 - store labelled images, inference results, models, and external data</p>
+                    <p>AWS EC2 - Docker Container with Flask API and Docker Container with React.js, Node, and Nginx</p>
+                    <p>ipynb - ETL, feature engineering, EDA</p>
+
+                    <p>For more information about system architecture and feature engineering, please visit <a href="https://github.com/sunh0003/W210Capstone-AccessibleParkingMap/blob/master/README.md">github</a></p>
                 	<br>
                     <img src="architecture.png" alt="sampleinfer" style="width:70%;">
                     <br>
